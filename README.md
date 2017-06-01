@@ -59,7 +59,7 @@ var lowerScale = muzak.scale([
   //  the beat, in number of beats
   //  defaults to the number of beats in a measure
   syncEvery: 4
-})
+});
 
 // muzak.song.at: pass in the measure to start from
 song.at(0)
@@ -67,7 +67,7 @@ song.at(0)
 //  object
 // "every": how many beats to pause between repeats
 // "times": how many times to repeat
-  .repeats(cMajorChord(1, muzak.staccato), { every: 1, times: 21 })
+  .repeats(cMajorChord(1, muzak.staccato), { every: 1, times: 21 });
 
 // muzak.song.at.plays: pass in a note, chord, or riff
 song.at(1)
