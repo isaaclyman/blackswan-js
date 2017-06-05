@@ -1,4 +1,5 @@
 enum Articulation {
+  None,
   Legato,
   Staccato
 };
