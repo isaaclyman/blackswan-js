@@ -82,7 +82,7 @@ function getFrequency(noteName: string): number {
     return PianoData.NoteMap[key];
   }
 
-  throw Error(`The note "${noteName}" does not exist.`);
+  throw Error(`The note "${noteName}" is unknown.`);
 }
 
 var Notes = {
