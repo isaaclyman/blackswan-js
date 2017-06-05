@@ -1,9 +1,12 @@
 import { PianoData } from './piano-data';
 import { Validate } from './validate';
 
-function createNote(noteName: string, frequency: number): void {
-  if (!!PianoData.NoteMap[noteName]) {
-    throw Error('The note "${noteName}" already exists and cannot be overwritten.');
+function createNote(noteName: string, frequency: number, overrideExisting: boolean = false): void {
+  if (!overrideExisting && !!PianoData.NoteMap[noteName]) {
+    throw Error(`
+      The note "${noteName}" already exists and cannot be overwritten unless
+      the 'overrideExisting' parameter is set to 'true'.`
+    );
   }
 
   PianoData.NoteMap[noteName] = frequency;
@@ -55,7 +58,7 @@ var getFrequency = function(noteName: string): number {
   } else if (noteName.length === 1) {
     octave = _octave;
   } else {
-    throw Error('Unrecognized note format "${noteName}".');
+    throw Error(`Unrecognized note format "${noteName}".`);
   }
 
   if (!!~'abdeg'.indexOf(note) && !!~PianoData.FlatSigns.indexOf(sign)) {
@@ -79,7 +82,7 @@ var getFrequency = function(noteName: string): number {
     return PianoData.NoteMap[key];
   }
 
-  throw Error('The note "${noteName}" does not exist.');
+  throw Error(`The note "${noteName}" does not exist.`);
 };
 
 var Notes = {
