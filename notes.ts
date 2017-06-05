@@ -11,13 +11,13 @@ function createNote(noteName: string, frequency: number, overrideExisting: boole
 
   PianoData.NoteMap[noteName] = frequency;
   return;
-};
+}
 
 var _octave = 4;
 function setOctave(newOctave: number|string): void {
   Validate.Octave(newOctave);
   _octave = Number(newOctave);
-};
+}
 
 function getNoteIndex(note: string): number {
   Validate.Note(note);
@@ -39,7 +39,7 @@ function getPrevNote(note: string): string {
     : PianoData.Notes[PianoData.Notes.length - 1];
 }
 
-var getFrequency = function(noteName: string): number {
+function getFrequency(noteName: string): number {
   var byKey = PianoData.NoteMap[noteName];
   if (byKey) {
     return byKey;
@@ -83,7 +83,7 @@ var getFrequency = function(noteName: string): number {
   }
 
   throw Error(`The note "${noteName}" does not exist.`);
-};
+}
 
 var Notes = {
   createNote,
