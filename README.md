@@ -38,9 +38,9 @@ var lowerRiff = muzak.sequence([
   muzak.rest(3),
   // muzak.note: pass in the note name (as before), a duration (number
   //  of beats) and optional configuration parameters
-  muzak.note('c3', 0.75, muzak.staccato),
-  muzak.note('e3', 0.25, muzak.staccato),
-  muzak.note('c3', 1, muzak.staccato)
+  muzak.note('c3', 0.75, muzak.as.staccato),
+  muzak.note('e3', 0.25, muzak.as.staccato),
+  muzak.note('c3', 1, muzak.as.staccato)
 ]);
 
 // Defining a set of notes to use for later improvisation
@@ -67,7 +67,7 @@ song.at(0)
 //  object
 // "every": how many beats to pause between repeats
 // "times": how many times to repeat
-  .repeats(cMajorChord(1, muzak.staccato), { every: 1, times: 21 });
+  .repeats(cMajorChord(1, muzak.as.staccato), { every: 1, times: 21 });
 
 // muzak.song.at.plays: pass in a note, chord, or riff
 song.at(1)
