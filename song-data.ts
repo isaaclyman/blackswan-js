@@ -1,8 +1,8 @@
 let title = `Unnamed`;
 
 interface TimeSignature {
-  beatsPerBar: number,
-  noteValue: number
+  beatsPerBar: number;
+  noteValue: number;
 }
 
 let timeSignature: TimeSignature = {
@@ -15,7 +15,7 @@ let tempo = 120;
 let SongData = {
   Tempo: tempo,
   TimeSignature: timeSignature,
-  Title: title
+  Title: title,
 };
 
 export { SongData };

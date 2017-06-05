@@ -18,9 +18,9 @@ function defaultOscillator(frequency: number) {
 }
 
 interface Note {
-  Articulation: Articulation,
-  Frequency: number,
-  Oscillator: OscillatorNode,
+  Articulation: Articulation;
+  Frequency: number;
+  Oscillator: OscillatorNode;
 }
 
 function createNote(frequency: number): Note {

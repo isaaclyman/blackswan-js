@@ -1,4 +1,4 @@
-# Muzak.js
+# muzak.js
 ## A spec for expressive music programming in JavaScript
 #### (Later: A library for expressive music programming in JavaScript)
 
@@ -15,9 +15,9 @@ After including muzak.js in a page:
 
 ```javascript
 // Create a song with a title, time signature and tempo (BPM)
-var song = muzak.song('My First Song');
-song.setTimeSignature(4, 4);
-song.setTempo(120);
+muzak.song('My First Song');
+muzak.setTimeSignature(4, 4);
+muzak.setTempo(120);
 
 // Now let's set up a chord to use later
 // muzak.chord: pass in all the notes to be played simultaneously, a
