@@ -24,7 +24,7 @@ function validateSign(sign: string): void {
   }
 }
 
-var Validate = {
+let Validate = {
   Note: validateNote,
   Octave: validateOctave,
   Sign: validateSign

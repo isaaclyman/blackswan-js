@@ -1,5 +1,5 @@
 // Only sharps are noted here; flats can be converted on-the-fly
-var _noteMap: { [name: string]: number } = {
+let _noteMap: { [name: string]: number } = {
   'a0': 27.5, 'a#0': 29.1353, 'b0': 30.8677, 'c1': 32.7032, 'c#1': 34.6478,
   'd1': 36.7081, 'd#1': 38.8909, 'e1': 41.2034, 'f1': 43.6535, 'f#1': 46.2493,
   'g1': 48.9994, 'g#1': 51.9131, 'a1': 55.0, 'a#1': 58.2705, 'b1': 61.7354,
@@ -20,14 +20,14 @@ var _noteMap: { [name: string]: number } = {
   'a#7': 3729.31, 'b7': 3951.07, 'c8': 4186.01
 };
 
-var _notes: string[] = [
+let _notes: string[] = [
   'a', 'b', 'c', 'd', 'e', 'f', 'g'
 ];
 
-var _flatSigns = ['b', '@'];
-var _sharpSigns = ['#'];
+let _flatSigns = ['b', '@'];
+let _sharpSigns = ['#'];
 
-var PianoData = {
+let PianoData = {
   FlatSigns: _flatSigns,
   NoteMap: _noteMap,
   Notes: _notes,

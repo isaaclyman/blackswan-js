@@ -13,7 +13,7 @@ function createNote(noteName: string, frequency: number, overrideExisting: boole
   return;
 }
 
-var _octave = 4;
+let _octave = 4;
 function setOctave(newOctave: number|string): void {
   Validate.Octave(newOctave);
   _octave = Number(newOctave);
@@ -21,31 +21,31 @@ function setOctave(newOctave: number|string): void {
 
 function getNoteIndex(note: string): number {
   Validate.Note(note);
-  var index = PianoData.Notes.indexOf(note);
+  let index = PianoData.Notes.indexOf(note);
   return index;
 }
 
 function getNextNote(note: string): string {
-  var currentNote = getNoteIndex(note);
+  let currentNote = getNoteIndex(note);
   return currentNote + 1 < PianoData.Notes.length
     ? PianoData.Notes[currentNote + 1]
     : PianoData.Notes[0];
 }
 
 function getPrevNote(note: string): string {
-  var currentNote = getNoteIndex(note);
+  let currentNote = getNoteIndex(note);
   return currentNote > 0
     ? PianoData.Notes[currentNote - 1]
     : PianoData.Notes[PianoData.Notes.length - 1];
 }
 
 function getFrequency(noteName: string): number {
-  var byKey = PianoData.NoteMap[noteName];
+  let byKey = PianoData.NoteMap[noteName];
   if (byKey) {
     return byKey;
   }
 
-  var key, note, sign, octave;
+  let key, note, sign, octave;
 
   note = noteName[0];
   if (noteName.length === 3) {
@@ -85,7 +85,7 @@ function getFrequency(noteName: string): number {
   throw Error(`The note "${noteName}" is unknown.`);
 }
 
-var Notes = {
+let Notes = {
   createNote,
   getFrequency,
   setOctave
