@@ -11,7 +11,7 @@ function setTempo(tempo: number): void {
   SongData.Tempo = tempo;
 }
 
-function setTimeSignature(signature: int[2]): void {
+function setTimeSignature(signature: [number, number]): void {
   SongData.TimeSignature.beatsPerBar = signature[0];
   SongData.TimeSignature.noteValue = signature[1];
 }

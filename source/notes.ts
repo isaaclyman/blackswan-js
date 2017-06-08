@@ -45,7 +45,10 @@ function getFrequency(noteName: string): number {
     return byKey;
   }
 
-  let key, note, sign, octave;
+  let key: string,
+      note: string,
+      sign: string = '',
+      octave: number;
 
   note = noteName[0];
   if (noteName.length === 3) {
@@ -54,7 +57,7 @@ function getFrequency(noteName: string): number {
     octave = Number(noteName[2]);
     Validate.Octave(octave);
   } else if (noteName.length === 2) {
-    octave = noteName[1];
+    octave = Number(noteName[1]);
   } else if (noteName.length === 1) {
     octave = _octave;
   } else {
@@ -72,13 +75,17 @@ function getFrequency(noteName: string): number {
     // If it's CF-flat, transform into the next note down
     // This changes octaves if the note is a C
     key = getPrevNote(note) +
-      note === 'c' ? octave - 1 : octave;
+      note === 'c' ?
+        (octave - 1).toString() :
+        octave.toString();
     return PianoData.NoteMap[key];
   } else if (!!~'be'.indexOf(note) && !!~PianoData.SharpSigns.indexOf(sign)) {
     // If it's BE-sharp, transform it into the next note up
     // This changes octaves if the note is a B
     key = getNextNote(note) +
-      note === 'b' ? octave + 1 : octave;
+      note === 'b' ?
+        (octave + 1).toString() :
+        octave.toString();
     return PianoData.NoteMap[key];
   }
 

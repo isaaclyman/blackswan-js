@@ -6,9 +6,6 @@
 import { Articulation } from './articulation';
 
 let _context = new AudioContext();
-let _oscillator:
-  (frequency: number) => OscillatorNode
-  = null;
 
 function defaultOscillator(frequency: number) {
   let oscillator = _context.createOscillator();
@@ -17,6 +14,10 @@ function defaultOscillator(frequency: number) {
   return oscillator;
 }
 
+let _oscillator:
+  (frequency: number) => OscillatorNode
+  = defaultOscillator;
+
 interface Note {
   Articulation: Articulation;
   Frequency: number;
@@ -24,9 +25,7 @@ interface Note {
 }
 
 function createNote(frequency: number): Note {
-  let oscillator = _oscillator
-    ? _oscillator(frequency)
-    : defaultOscillator(frequency);
+  let oscillator = _oscillator(frequency);
 
   return {
     Articulation: Articulation.None,

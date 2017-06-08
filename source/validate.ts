@@ -20,7 +20,7 @@ function validateOctave(octave: number|string): void {
 
 function validateSign(sign: string): void {
   if (!~PianoData.FlatSigns.indexOf(sign) && !~PianoData.SharpSigns.indexOf(sign)) {
-    throw Error(`Invalid sign "${noteName[1]}".`);
+    throw Error(`Invalid sign "${sign}".`);
   }
 }
 
