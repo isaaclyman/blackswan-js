@@ -3,7 +3,7 @@
     "target": "es2015",
     "module": "system",
     "sourceMap": true,
-    "outFile": "./dist/muzak.js",
+    "outFile": "./dist/blackswan.js",
     "rootDir": "./",
     "strict": true,
     "noImplicitAny": true,

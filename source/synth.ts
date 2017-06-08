@@ -19,18 +19,28 @@ let _oscillator:
   = defaultOscillator;
 
 interface Note {
-  Articulation: Articulation;
+  Articulation: Articulation[];
   Frequency: number;
   Oscillator: OscillatorNode;
 }
 
-function createNote(frequency: number): Note {
-  let oscillator = _oscillator(frequency);
+let _memoizedNotes: Note[] = [];
 
-  return {
-    Articulation: Articulation.None,
+function getMemoizedNote(frequency: number, articulation: Articulation[]): Note | undefined {
+  return _memoizedNotes.find(
+    (note) => note.Frequency === frequency && note.Articulation.every(
+      (art) => !!~articulation.indexOf(art)
+    )
+  );
+}
+
+function synthesizeNote(frequency: number, articulation: Articulation[]): Note {
+  let memoizedNote = getMemoizedNote(frequency, articulation);
+
+  return memoizedNote || {
+    Articulation: articulation,
     Frequency: frequency,
-    Oscillator: oscillator
+    Oscillator: _oscillator(frequency)
   };
 }
 
@@ -39,6 +49,8 @@ function setOscillator(oscillator: (frequency: number) => OscillatorNode): void 
 }
 
 function playNote(note: Note): void {
+  // Should probably connect sooner and disconnect later...
+  //  depends on what gives the best performance
   note.Oscillator.connect(_context.destination);
   note.Oscillator.start(0);
 }
@@ -49,9 +61,9 @@ function stopNote(note: Note): void {
 }
 
 var Synth = {
-  CreateNote: createNote,
   SetOscillator: setOscillator,
   StopNote: stopNote,
+  SynthesizeNote: synthesizeNote,
   PlayNote: playNote,
 };
 

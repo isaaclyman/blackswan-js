@@ -12,7 +12,13 @@ let timeSignature: TimeSignature = {
 
 let tempo = 120;
 
-let SongData = {
+interface Song {
+  Tempo: number,
+  TimeSignature: TimeSignature,
+  Title: string,
+}
+
+let SongData: Song = {
   Tempo: tempo,
   TimeSignature: timeSignature,
   Title: title,

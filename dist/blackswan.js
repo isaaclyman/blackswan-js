@@ -14,126 +14,9 @@ System.register("source/articulation", [], function (exports_1, context_1) {
         }
     };
 });
-System.register("source/song-data", [], function (exports_2, context_2) {
+System.register("source/piano-data", [], function (exports_2, context_2) {
     "use strict";
     var __moduleName = context_2 && context_2.id;
-    var title, timeSignature, tempo, SongData;
-    return {
-        setters: [],
-        execute: function () {
-            title = `Unnamed`;
-            timeSignature = {
-                beatsPerBar: 4,
-                noteValue: 4
-            };
-            tempo = 120;
-            SongData = {
-                Tempo: tempo,
-                TimeSignature: timeSignature,
-                Title: title,
-            };
-            exports_2("SongData", SongData);
-        }
-    };
-});
-// This file contains code for generating the piano synth.
-// All variables are pluggable so that a user-configured synth
-//  can be used seamlessly, and arbitrary notes can be played with
-//  arbitrary articulation and voicing.
-System.register("source/synth", ["source/articulation"], function (exports_3, context_3) {
-    "use strict";
-    var __moduleName = context_3 && context_3.id;
-    function defaultOscillator(frequency) {
-        let oscillator = _context.createOscillator();
-        oscillator.frequency.value = frequency;
-        oscillator.type = 'sine';
-        return oscillator;
-    }
-    function createNote(frequency) {
-        let oscillator = _oscillator(frequency);
-        return {
-            Articulation: articulation_1.Articulation.None,
-            Frequency: frequency,
-            Oscillator: oscillator
-        };
-    }
-    function setOscillator(oscillator) {
-        _oscillator = oscillator;
-    }
-    function playNote(note) {
-        note.Oscillator.connect(_context.destination);
-        note.Oscillator.start(0);
-    }
-    function stopNote(note) {
-        note.Oscillator.stop();
-        note.Oscillator.disconnect(_context.destination);
-    }
-    var articulation_1, _context, _oscillator, Synth;
-    return {
-        setters: [
-            function (articulation_1_1) {
-                articulation_1 = articulation_1_1;
-            }
-        ],
-        execute: function () {
-            _context = new AudioContext();
-            _oscillator = defaultOscillator;
-            Synth = {
-                CreateNote: createNote,
-                SetOscillator: setOscillator,
-                StopNote: stopNote,
-                PlayNote: playNote,
-            };
-            exports_3("Synth", Synth);
-        }
-    };
-});
-System.register("source/base", ["source/articulation", "source/song-data"], function (exports_4, context_4) {
-    "use strict";
-    var __moduleName = context_4 && context_4.id;
-    function setSongTitle(title) {
-        song_data_1.SongData.Title = title;
-    }
-    function setTempo(tempo) {
-        song_data_1.SongData.Tempo = tempo;
-    }
-    function setTimeSignature(signature) {
-        song_data_1.SongData.TimeSignature.beatsPerBar = signature[0];
-        song_data_1.SongData.TimeSignature.noteValue = signature[1];
-    }
-    var articulation_2, song_data_1, Base;
-    return {
-        setters: [
-            function (articulation_2_1) {
-                articulation_2 = articulation_2_1;
-            },
-            function (song_data_1_1) {
-                song_data_1 = song_data_1_1;
-            }
-        ],
-        execute: function () {
-            Base = {
-                as: articulation_2.Articulation,
-                song: setSongTitle,
-                setTempo,
-                setTimeSignature,
-            };
-            exports_4("muzak", Base);
-        }
-    };
-});
-System.register("source/TEST", [], function (exports_5, context_5) {
-    "use strict";
-    var __moduleName = context_5 && context_5.id;
-    return {
-        setters: [],
-        execute: function () {
-        }
-    };
-});
-System.register("source/piano-data", [], function (exports_6, context_6) {
-    "use strict";
-    var __moduleName = context_6 && context_6.id;
     var _noteMap, _notes, _flatSigns, _sharpSigns, PianoData;
     return {
         setters: [],
@@ -170,13 +53,13 @@ System.register("source/piano-data", [], function (exports_6, context_6) {
                 Notes: _notes,
                 SharpSigns: _sharpSigns
             };
-            exports_6("PianoData", PianoData);
+            exports_2("PianoData", PianoData);
         }
     };
 });
-System.register("source/validate", ["source/piano-data"], function (exports_7, context_7) {
+System.register("source/validate", ["source/piano-data"], function (exports_3, context_3) {
     "use strict";
-    var __moduleName = context_7 && context_7.id;
+    var __moduleName = context_3 && context_3.id;
     function validateNote(note) {
         if (!~piano_data_1.PianoData.Notes.indexOf(note)) {
             throw Error(`"${note}" is not a valid note name between "a" and "g".`);
@@ -209,13 +92,13 @@ System.register("source/validate", ["source/piano-data"], function (exports_7, c
                 Octave: validateOctave,
                 Sign: validateSign
             };
-            exports_7("Validate", Validate);
+            exports_3("Validate", Validate);
         }
     };
 });
-System.register("source/notes", ["source/piano-data", "source/validate"], function (exports_8, context_8) {
+System.register("source/notes", ["source/piano-data", "source/validate"], function (exports_4, context_4) {
     "use strict";
-    var __moduleName = context_8 && context_8.id;
+    var __moduleName = context_4 && context_4.id;
     function createNote(noteName, frequency, overrideExisting = false) {
         if (!overrideExisting && !!piano_data_2.PianoData.NoteMap[noteName]) {
             throw Error(`
@@ -313,8 +196,150 @@ System.register("source/notes", ["source/piano-data", "source/validate"], functi
                 getFrequency,
                 setOctave
             };
-            exports_8("Notes", Notes);
+            exports_4("Notes", Notes);
         }
     };
 });
-//# sourceMappingURL=muzak.js.map
+// This file contains code for generating the piano synth.
+// All variables are pluggable so that a user-configured synth
+//  can be used seamlessly, and arbitrary notes can be played with
+//  arbitrary articulation and voicing.
+System.register("source/synth", [], function (exports_5, context_5) {
+    "use strict";
+    var __moduleName = context_5 && context_5.id;
+    function defaultOscillator(frequency) {
+        let oscillator = _context.createOscillator();
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        return oscillator;
+    }
+    function getMemoizedNote(frequency, articulation) {
+        return _memoizedNotes.find((note) => note.Frequency === frequency && note.Articulation.every((art) => !!~articulation.indexOf(art)));
+    }
+    function synthesizeNote(frequency, articulation) {
+        let memoizedNote = getMemoizedNote(frequency, articulation);
+        return memoizedNote || {
+            Articulation: articulation,
+            Frequency: frequency,
+            Oscillator: _oscillator(frequency)
+        };
+    }
+    function setOscillator(oscillator) {
+        _oscillator = oscillator;
+    }
+    function playNote(note) {
+        // Should probably connect sooner and disconnect later...
+        //  depends on what gives the best performance
+        note.Oscillator.connect(_context.destination);
+        note.Oscillator.start(0);
+    }
+    function stopNote(note) {
+        note.Oscillator.stop();
+        note.Oscillator.disconnect(_context.destination);
+    }
+    var _context, _oscillator, _memoizedNotes, Synth;
+    return {
+        setters: [],
+        execute: function () {
+            _context = new AudioContext();
+            _oscillator = defaultOscillator;
+            _memoizedNotes = [];
+            Synth = {
+                SetOscillator: setOscillator,
+                StopNote: stopNote,
+                SynthesizeNote: synthesizeNote,
+                PlayNote: playNote,
+            };
+            exports_5("Synth", Synth);
+        }
+    };
+});
+System.register("source/scheduler", [], function (exports_6, context_6) {
+    "use strict";
+    var __moduleName = context_6 && context_6.id;
+    return {
+        setters: [],
+        execute: function () {
+        }
+    };
+});
+System.register("source/song-data", [], function (exports_7, context_7) {
+    "use strict";
+    var __moduleName = context_7 && context_7.id;
+    var title, timeSignature, tempo, SongData;
+    return {
+        setters: [],
+        execute: function () {
+            title = `Unnamed`;
+            timeSignature = {
+                beatsPerBar: 4,
+                noteValue: 4
+            };
+            tempo = 120;
+            SongData = {
+                Tempo: tempo,
+                TimeSignature: timeSignature,
+                Title: title,
+            };
+            exports_7("SongData", SongData);
+        }
+    };
+});
+System.register("source/base", ["source/articulation", "source/notes", "source/song-data", "source/synth"], function (exports_8, context_8) {
+    "use strict";
+    var __moduleName = context_8 && context_8.id;
+    function setSongTitle(title) {
+        song_data_1.SongData.Title = title;
+    }
+    function setTempo(tempo) {
+        song_data_1.SongData.Tempo = tempo;
+    }
+    function setTimeSignature(signature) {
+        song_data_1.SongData.TimeSignature.beatsPerBar = signature[0];
+        song_data_1.SongData.TimeSignature.noteValue = signature[1];
+    }
+    function note(noteName, duration, ...config) {
+        let note = synth_1.Synth.SynthesizeNote(notes_1.Notes.getFrequency(noteName), config);
+        return {
+            Duration: duration,
+            Note: note
+        };
+    }
+    var articulation_1, notes_1, song_data_1, synth_1, Base;
+    return {
+        setters: [
+            function (articulation_1_1) {
+                articulation_1 = articulation_1_1;
+            },
+            function (notes_1_1) {
+                notes_1 = notes_1_1;
+            },
+            function (song_data_1_1) {
+                song_data_1 = song_data_1_1;
+            },
+            function (synth_1_1) {
+                synth_1 = synth_1_1;
+            }
+        ],
+        execute: function () {
+            Base = {
+                as: articulation_1.Articulation,
+                note,
+                setTempo,
+                setTimeSignature,
+                song: setSongTitle,
+            };
+            exports_8("blackswan", Base);
+        }
+    };
+});
+System.register("source/TEST", [], function (exports_9, context_9) {
+    "use strict";
+    var __moduleName = context_9 && context_9.id;
+    return {
+        setters: [],
+        execute: function () {
+        }
+    };
+});
+//# sourceMappingURL=blackswan.js.map

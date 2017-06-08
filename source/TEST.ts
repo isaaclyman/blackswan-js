@@ -1,1 +1,1 @@
-import { muzak } from './base';
+import { blackswan } from './base';
