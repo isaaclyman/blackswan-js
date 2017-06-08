@@ -2,6 +2,9 @@
 ## A spec for expressive music programming in JavaScript
 #### (Later: A library for expressive music programming in JavaScript)
 
+## About
+blackswan.js is named after the song "Black Swan Song" by the British rock band Athlete. Its intended use is for writing songs; once a song is written, it can easily be played back in compatible browsers. It has a simple piano synth built in and is easy to use if you have basic JavaScript skills.
+
 ## Principles
 - Writing a song in blackswan.js should be more like writing sheet music than sound programming.
 - Structured improvisation should be baked in.
