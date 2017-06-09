@@ -14,6 +14,7 @@ let Base = (function (window) {
             play: play,
             setTimeSignature: setTimeSignature,
             setTempo: setTempo,
+            _master: [],
             _metadata: metadata,
         };
         return song;
@@ -25,7 +26,7 @@ let Base = (function (window) {
     }
     function setTimeSignature(numerator, denominator) {
         let timeSignature = {
-            beatsPerBar: numerator,
+            beatsPerMeasure: numerator,
             noteValue: denominator
         };
         this._metadata.TimeSignature = timeSignature;
@@ -36,7 +37,7 @@ let Base = (function (window) {
     /* muzak static functions */
     function chord(notes, duration, ...config) {
         return {
-            Chord: notes.map((n) => note(n, duration, ...config)),
+            Notes: notes.map((n) => Synth.SynthesizeNote(Notes.getFrequency(n), config)),
             Duration: duration,
         };
     }

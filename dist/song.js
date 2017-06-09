@@ -1,5 +1,5 @@
 let _commonTime = {
-    beatsPerBar: 4,
+    beatsPerMeasure: 4,
     noteValue: 4
 };
 let _defaultTempo = 120;

@@ -1,4 +1,13 @@
 import { PianoData } from './piano-data';
+import { Rest, Sequence, TimedChord, TimedNote } from './scheduler';
+
+function isTimedChord(value: TimedNote|TimedChord|Sequence|Rest): value is TimedChord {
+  return (<TimedChord>value).Notes !== undefined;
+}
+
+function isTimedNote(value: TimedNote|TimedChord|Sequence|Rest): value is TimedNote {
+  return (<TimedNote>value).Note !== undefined;
+}
 
 function validateNote(note: string): void {
   if (!~PianoData.Notes.indexOf(note)) {
@@ -25,6 +34,8 @@ function validateSign(sign: string): void {
 }
 
 let Validate = {
+  isTimedChord,
+  isTimedNote,
   Note: validateNote,
   Octave: validateOctave,
   Sign: validateSign

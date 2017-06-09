@@ -1,4 +1,10 @@
 import { PianoData } from './piano-data';
+function isTimedChord(value) {
+    return value.Notes !== undefined;
+}
+function isTimedNote(value) {
+    return value.Note !== undefined;
+}
 function validateNote(note) {
     if (!~PianoData.Notes.indexOf(note)) {
         throw Error(`"${note}" is not a valid note name between "a" and "g".`);
@@ -19,6 +25,8 @@ function validateSign(sign) {
     }
 }
 let Validate = {
+    isTimedChord,
+    isTimedNote,
     Note: validateNote,
     Octave: validateOctave,
     Sign: validateSign
