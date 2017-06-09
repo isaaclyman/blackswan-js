@@ -1,4 +1,3 @@
-import { Improvisable, Playable, Repeatable } from './category-types';
 import { Song } from './song';
 import { Note } from './synth';
 
@@ -8,9 +7,9 @@ export interface ActionContext {
 }
 
 export interface Actions {
-  improvises: (improvisable: Improvisable) => void,
-  plays: (playable: Playable) => void,
-  repeats: (repeatable: Repeatable) => void,
+  improvises: (improvisable: TimedNote | TimedChord | Sequence) => void,
+  plays: (playable: any) => void,
+  repeats: (repeatable: any) => void,
 }
 
 export interface Moment {
@@ -19,25 +18,25 @@ export interface Moment {
 
 export interface Rest extends Moment { }
 
-export interface Sequence extends Array<Moment>, Playable { }
+export interface Sequence extends Array<Moment> { }
 
-export interface TimedChord extends Moment, Playable {
+export interface TimedChord extends Moment {
   Chord: TimedNote[]
 }
 
-export interface TimedNote extends Moment, Playable {
+export interface TimedNote extends Moment {
   Note: Note,
 }
 
-function improvises(this: ActionContext, improvisable: Improvisable): void {
+function improvises(this: ActionContext, scale: any[]) {
 
 }
 
-function plays<T extends Playable>(this: ActionContext, playable: T): void {
+function plays(this: ActionContext, playable: TimedNote | TimedChord | Sequence): void {
 
 }
 
-function repeats(this: ActionContext, repeatable: Repeatable): void {
+function repeats(this: ActionContext, repeatable: any): void {
 
 }
 

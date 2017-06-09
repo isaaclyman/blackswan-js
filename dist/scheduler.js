@@ -1,4 +1,4 @@
-function improvises(improvisable) {
+function improvises(scale) {
 }
 function plays(playable) {
 }
