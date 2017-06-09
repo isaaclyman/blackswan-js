@@ -1,37 +1,89 @@
 // This file contains the external interface for blackswan.js
 import { Articulation } from './articulation';
 import { Notes } from './notes';
-import { TimedNote } from './scheduler';
-import { SongData } from './song-data';
+import { Rest, Scheduler, Sequence, TimedChord, TimedNote } from './scheduler';
+import { DefaultSongData, Song, TimeSignature } from './song';
 import { Synth } from './synth';
 
-function setSongTitle(title: string): void {
-  SongData.Title = title;
-}
+let Base = (function (window) {
+  /* song initializer and instance members */
 
-function setTempo(tempo: number): void {
-  SongData.Tempo = tempo;
-}
+  function createSong(title: string): Song {
+    let metadata = DefaultSongData();
+    metadata.Title = title;
 
-function setTimeSignature(signature: [number, number]): void {
-  SongData.TimeSignature.beatsPerBar = signature[0];
-  SongData.TimeSignature.noteValue = signature[1];
-}
+    let song: Song = {
+      at: getActions,
+      play: play,
+      setTimeSignature: setTimeSignature,
+      setTempo: setTempo,
+      _metadata: metadata,
+    };
 
-function note(noteName: string, duration: number, ...config: Articulation[]): TimedNote {
-  let note = Synth.SynthesizeNote(Notes.getFrequency(noteName), config);
-  return {
-    Duration: duration,
-    Note: note
-  } as TimedNote;
-}
+    return song;
+  }
 
-let Base = {
-  as: Articulation,
-  note,
-  setTempo,
-  setTimeSignature,
-  song: setSongTitle,
-};
+  function getActions(this: Song, measure: number) {
+    return Scheduler.GetActions(measure, this);
+  }
+
+  function play(this: Song) {
+
+  }
+
+  function setTimeSignature(this: Song, numerator: number, denominator: number): void {
+    let timeSignature: TimeSignature = {
+      beatsPerBar: numerator,
+      noteValue: denominator
+    };
+
+    this._metadata.TimeSignature = timeSignature;
+  }
+
+  function setTempo(this: Song, tempo: number): void {
+    this._metadata.Tempo = tempo;
+  }
+
+  /* muzak static functions */
+
+  function chord(notes: string[], duration: number, ...config: Articulation[]): TimedChord {
+    return {
+      Chord: notes.map((n) => note(n, duration, ...config)),
+      Duration: duration,
+    } as TimedChord;
+  }
+
+  function note(noteName: string, duration: number, ...config: Articulation[]): TimedNote {
+    let note = Synth.SynthesizeNote(Notes.getFrequency(noteName), config);
+    return {
+      Duration: duration,
+      Note: note
+    } as TimedNote;
+  }
+
+  function rest(duration: number): Rest {
+    return {
+      Duration: duration
+    } as Rest;
+  }
+
+  function sequence(sequence: Sequence): Sequence {
+    return sequence;
+  }
+
+  let Base = {
+    as: Articulation,
+    chord,
+    note,
+    rest,
+    sequence,
+    song: createSong,
+  };
+
+  // Create the blackswan global, for people choosing to use it that way
+  (<any>window).blackswan = Base;
+
+  return Base;
+})(window);
 
 export { Base as blackswan };

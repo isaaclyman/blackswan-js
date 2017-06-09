@@ -5,24 +5,22 @@
 
 import { Articulation } from './articulation';
 
+export interface Note {
+  Articulation: Articulation[];
+  Frequency: number;
+  Oscillator: OscillatorNode;
+}
+
 let _context = new AudioContext();
 
-function defaultOscillator(frequency: number) {
+function defaultOscillator(frequency: number): OscillatorNode {
   let oscillator = _context.createOscillator();
   oscillator.frequency.value = frequency;
   oscillator.type = 'sine';
   return oscillator;
 }
 
-let _oscillator:
-  (frequency: number) => OscillatorNode
-  = defaultOscillator;
-
-interface Note {
-  Articulation: Articulation[];
-  Frequency: number;
-  Oscillator: OscillatorNode;
-}
+let _oscillator = defaultOscillator;
 
 let _memoizedNotes: Note[] = [];
 
@@ -67,4 +65,4 @@ var Synth = {
   PlayNote: playNote,
 };
 
-export { Note, Synth };
+export { Synth };

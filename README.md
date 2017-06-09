@@ -3,11 +3,12 @@
 #### (Later: A library for expressive music programming in JavaScript)
 
 ## About
-blackswan.js is named after the song "Black Swan Song" by the British rock band Athlete. Its intended use is for writing songs; once a song is written, it can easily be played back in compatible browsers. It has a simple piano synth built in and is easy to use if you have basic JavaScript skills.
+blackswan.js is named after "Black Swan Song" by the British band Athlete. Its intended use is for writing songs. Any song written in blackswan.js can easily be played back in compatible browsers (up-to-date Chrome is a sure bet). It has a simple piano synth built in and is easy to use if you have basic JavaScript skills.
 
 ## Principles
 - Writing a song in blackswan.js should be more like writing sheet music than sound programming.
 - Structured improvisation should be baked in.
+- Later: action calls can be chained so that each action doesn't have to be manually lined up with a measure.
 - Later: tools should be provided for setting the musical key/scale in order to guide the composition process and improvisation.
 - Later: there should be configuration methods for setting up custom improvisation methods.
 - Later: there should be methods for plugging in new synths.
@@ -18,9 +19,9 @@ After including blackswan.js in a page:
 
 ```javascript
 // Create a song with a title, time signature and tempo (BPM)
-blackswan.song('My First Song');
-blackswan.setTimeSignature(4, 4);
-blackswan.setTempo(120);
+var song = blackswan.song('My First Song');
+song.setTimeSignature(4, 4);
+song.setTempo(120);
 
 // Now let's set up a chord to use later
 // blackswan.chord: pass in all the notes to be played simultaneously, a
@@ -50,7 +51,7 @@ var lowerRiff = blackswan.sequence([
 // blackswan.scale: pass in an array of notes and chords to improvise with
 //  and an optional configuration object
 var lowerScale = blackswan.scale([
-  'b3', 'c3', 'e3', 'f3', 'g3', 'c4',
+  'b2', 'c3', 'e3', 'f3', 'g3', 'c4',
 ], {
   // minDuration: the shortest duration that a note should play, in number of beats
   //  defaults to 1
@@ -79,5 +80,8 @@ song.at(1)
 // blackswan.song.at.improvises: pass in a scale and a duration (number of beats)
 song.at(3)
   .improvises(lowerScale, 8);
+
+// blackswan.song.play: plays your song
+song.play();
 
 ```
