@@ -13,9 +13,6 @@ function play(this: Song) {
 
   for (var track of this._master) {
     for (var note of track.Notes) {
-      if (note.Oscillator.numberOfOutputs === 0) {
-        note.Oscillator.connect(Synth.Context.destination);
-      }
       playAt(note, track.WhenSeconds, track.DurationSeconds);
     }
   }

@@ -1,12 +1,13 @@
-import { Articulation } from './articulation';
+import { Style } from './style';
 export interface Note {
-    Articulation: Articulation[];
     Frequency: number;
+    Gain: GainNode;
     Oscillator: OscillatorNode;
+    Style: Style[];
 }
 declare var Synth: {
     Context: AudioContext;
     SetOscillator: (oscillator: (frequency: number) => OscillatorNode) => void;
-    SynthesizeNote: (frequency: number, articulation: Articulation[]) => Note;
+    SynthesizeNote: (frequency: number, style: Style[]) => Note;
 };
 export { Synth };

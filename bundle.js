@@ -63,34 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */,
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(13);
-
-let song = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('one note');
-// Default tempo and time signature will be fine.
-song.at(0).plays(__WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 4));
-song.play();
-
-
-/***/ }),
-/* 10 */
+/* 0 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -131,16 +108,59 @@ let PianoData = {
 
 
 /***/ }),
-/* 11 */
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Style; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return StyleDynamics; });
+var Style;
+(function (Style) {
+    Style[Style["None"] = 0] = "None";
+    Style[Style["Legato"] = 1] = "Legato";
+    Style[Style["Staccato"] = 2] = "Staccato";
+    Style[Style["Pianissimo"] = 3] = "Pianissimo";
+    Style[Style["Piano"] = 4] = "Piano";
+    Style[Style["MezzoPiano"] = 5] = "MezzoPiano";
+    Style[Style["MezzoForte"] = 6] = "MezzoForte";
+    Style[Style["Forte"] = 7] = "Forte";
+    Style[Style["Fortissimo"] = 8] = "Fortissimo";
+})(Style || (Style = {}));
+;
+let StyleDynamics = {
+    [Style.Pianissimo]: 0.01,
+    [Style.Piano]: 0.05,
+    [Style.MezzoPiano]: 0.2,
+    [Style.MezzoForte]: 0.4,
+    [Style.Forte]: 0.6,
+    [Style.Fortissimo]: 1.0
+};
+
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Synth; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style__ = __webpack_require__(1);
 // This file contains code for generating the piano synth.
 // All variables are pluggable so that a user-configured synth
 //  can be used seamlessly, and arbitrary notes can be played with
-//  arbitrary articulation and voicing.
+//  arbitrary articulation and dynamics.
+
 let _context = new AudioContext();
+function defaultGain(style) {
+    let gainNode = _context.createGain();
+    for (var st of style) {
+        let dynamics = __WEBPACK_IMPORTED_MODULE_0__style__["b" /* StyleDynamics */][st];
+        if (dynamics) {
+            gainNode.gain.value = dynamics;
+        }
+    }
+    return gainNode;
+}
 function defaultOscillator(frequency) {
     let oscillator = _context.createOscillator();
     oscillator.frequency.value = frequency;
@@ -148,17 +168,28 @@ function defaultOscillator(frequency) {
     return oscillator;
 }
 let _oscillator = defaultOscillator;
+let _gain = defaultGain;
 let _memoizedNotes = [];
-function getMemoizedNote(frequency, articulation) {
-    return _memoizedNotes.find((note) => note.Frequency === frequency && note.Articulation.every((art) => !!~articulation.indexOf(art)));
+function getMemoizedNote(frequency, style) {
+    return _memoizedNotes.find((note) => note.Frequency === frequency && note.Style.every((art) => !!~style.indexOf(art)));
 }
-function synthesizeNote(frequency, articulation) {
-    let memoizedNote = getMemoizedNote(frequency, articulation);
-    return memoizedNote || {
-        Articulation: articulation,
+function synthesizeNote(frequency, style) {
+    let memoizedNote = getMemoizedNote(frequency, style);
+    if (memoizedNote) {
+        return memoizedNote;
+    }
+    let gain = _gain(style);
+    let oscillator = _oscillator(frequency);
+    oscillator.connect(gain);
+    gain.connect(_context.destination);
+    let note = {
         Frequency: frequency,
-        Oscillator: _oscillator(frequency)
+        Gain: gain,
+        Oscillator: oscillator,
+        Style: style,
     };
+    _memoizedNotes.push(note);
+    return note;
 }
 function setOscillator(oscillator) {
     _oscillator = oscillator;
@@ -172,12 +203,12 @@ var Synth = {
 
 
 /***/ }),
-/* 12 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Validate; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__piano_data__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__piano_data__ = __webpack_require__(0);
 
 function isTimedChord(value) {
     return value.Notes !== undefined;
@@ -215,17 +246,17 @@ let Validate = {
 
 
 /***/ }),
-/* 13 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Base; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__articulation__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__notes__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__scheduler__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__song__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__synth__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__notes__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__scheduler__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__song__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__synth__ = __webpack_require__(2);
 // This file contains the external interface for blackswan.js
 
 
@@ -284,7 +315,7 @@ let Base = (function (window) {
         return sequence;
     }
     let Base = {
-        as: __WEBPACK_IMPORTED_MODULE_0__articulation__["a" /* Articulation */],
+        as: __WEBPACK_IMPORTED_MODULE_0__style__["a" /* Style */],
         chord,
         note,
         rest,
@@ -299,29 +330,27 @@ let Base = (function (window) {
 
 
 /***/ }),
-/* 14 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Articulation; });
-var Articulation;
-(function (Articulation) {
-    Articulation[Articulation["None"] = 0] = "None";
-    Articulation[Articulation["Legato"] = 1] = "Legato";
-    Articulation[Articulation["Staccato"] = 2] = "Staccato";
-})(Articulation || (Articulation = {}));
-;
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(4);
 
+let song = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('one note');
+// Default tempo and time signature will be fine.
+song.at(0).plays(__WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 4));
+song.play();
 
 
 /***/ }),
-/* 15 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Notes; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__piano_data__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__validate__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__piano_data__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__validate__ = __webpack_require__(3);
 
 
 function createNote(noteName, frequency, overrideExisting = false) {
@@ -414,12 +443,12 @@ let Notes = {
 
 
 /***/ }),
-/* 16 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Player; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__synth__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__synth__ = __webpack_require__(2);
 
 let _lastPaused = 0;
 function pause() {
@@ -430,9 +459,6 @@ function play() {
     _lastPaused = 0;
     for (var track of this._master) {
         for (var note of track.Notes) {
-            if (note.Oscillator.numberOfOutputs === 0) {
-                note.Oscillator.connect(__WEBPACK_IMPORTED_MODULE_0__synth__["a" /* Synth */].Context.destination);
-            }
             playAt(note, track.WhenSeconds, track.DurationSeconds);
         }
     }
@@ -454,12 +480,12 @@ let Player = {
 
 
 /***/ }),
-/* 17 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Scheduler; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__validate__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__validate__ = __webpack_require__(3);
 
 function improvises(context, scale) {
 }
@@ -538,7 +564,7 @@ let Scheduler = {
 
 
 /***/ }),
-/* 18 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

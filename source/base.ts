@@ -1,5 +1,5 @@
 // This file contains the external interface for blackswan.js
-import { Articulation } from './articulation';
+import { Style } from './style';
 import { Notes } from './notes';
 import { Player } from './player';
 import { Actions, Rest, Scheduler, Sequence, TimedChord, TimedNote } from './scheduler';
@@ -44,14 +44,14 @@ let Base = (function (window) {
 
   /* muzak static functions */
 
-  function chord(notes: string[], duration: number, ...config: Articulation[]): TimedChord {
+  function chord(notes: string[], duration: number, ...config: Style[]): TimedChord {
     return {
       Notes: notes.map((n) => Synth.SynthesizeNote(Notes.getFrequency(n), config)),
       Duration: duration,
     } as TimedChord;
   }
 
-  function note(noteName: string, duration: number, ...config: Articulation[]): TimedNote {
+  function note(noteName: string, duration: number, ...config: Style[]): TimedNote {
     let note = Synth.SynthesizeNote(Notes.getFrequency(noteName), config);
     return {
       Duration: duration,
@@ -70,7 +70,7 @@ let Base = (function (window) {
   }
 
   let Base = {
-    as: Articulation,
+    as: Style,
     chord,
     note,
     rest,
