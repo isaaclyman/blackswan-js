@@ -8,9 +8,9 @@ export interface ActionContext {
 }
 
 export interface Actions {
-  improvises: (this: ActionContext, improvisable: any) => void,
-  plays: (this: ActionContext, playable: TimedNote|TimedChord|Sequence) => void,
-  repeats: (this: ActionContext, repeatable: TimedNote|TimedChord, config: RepeatConfig) => void,
+  improvises: (improvisable: any) => void,
+  plays: (playable: TimedNote|TimedChord|Sequence) => void,
+  repeats: (repeatable: TimedNote|TimedChord, config: RepeatConfig) => void,
 }
 
 export interface Moment {
@@ -40,15 +40,16 @@ export interface Track {
   DurationSeconds: number, // also in seconds
 }
 
-function improvises(this: ActionContext, scale: any[]) {
+function improvises(context: ActionContext, scale: any[]) {
 
 }
 
-function plays(this: ActionContext, playable: TimedNote|TimedChord|Sequence): void {
-  this.Song._master.concat(getTracks(this, playable));
+function plays(context: ActionContext, playable: TimedNote|TimedChord|Sequence): void {
+  let tracksToAdd = getTracks(context, playable);
+  context.Song._master = context.Song._master.concat(tracksToAdd);
 }
 
-function repeats(this: ActionContext, repeatable: TimedNote|TimedChord, config: RepeatConfig): void {
+function repeats(context: ActionContext, repeatable: TimedNote|TimedChord, config: RepeatConfig): void {
 
 }
 
@@ -96,17 +97,23 @@ function getTracks(context: ActionContext, playable: TimedNote|TimedChord|Sequen
   }
 }
 
-function getActions(this: Song, measure: number): Actions {
+function getActions(song: Song, measure: number): Actions {
   let actionContext: ActionContext = {
     Measure: measure,
-    Song: this
+    Song: song
   };
 
   let actions: Actions = {
-    improvises: improvises.bind(actionContext),
-    plays: plays.bind(actionContext),
-    repeats: repeats.bind(actionContext)
-  };
+    improvises: function(improvisable: any) {
+      return improvises(actionContext, improvisable);
+    },
+    plays: function (playable: TimedNote|TimedChord|Sequence) {
+      return plays(actionContext, playable);
+    },
+    repeats: function (repeatable: TimedNote|TimedChord, config: RepeatConfig) {
+      return repeats(actionContext, repeatable, config);
+    }
+  } as Actions;
 
   return actions;
 }

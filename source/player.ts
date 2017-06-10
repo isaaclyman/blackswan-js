@@ -25,6 +25,8 @@ function playAt(note: Note, whenSeconds: number, durationSeconds: number, starti
   let startSeconds = Math.max(whenSeconds - startingAtSeconds, 0);
   let stopSeconds = Math.max((whenSeconds + durationSeconds) - startingAtSeconds, 0);
 
+  console.log('played', startSeconds, stopSeconds, note.Oscillator);
+
   if (stopSeconds === 0) {
     return;
   }

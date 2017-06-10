@@ -1,10 +1,10 @@
 import { Validate } from './validate';
-function improvises(scale) {
+function improvises(context, scale) {
 }
-function plays(playable) {
-    this.Song._master.concat(getTracks(this, playable));
+function plays(context, playable) {
+    context.Song._master.concat(getTracks(context, playable));
 }
-function repeats(repeatable, config) {
+function repeats(context, repeatable, config) {
 }
 function measuresToSeconds(measures, song) {
     let beatsPerMinute = song._metadata.Tempo;
@@ -50,15 +50,21 @@ function getTracks(context, playable) {
         }).reduce((a, b) => a.concat(b));
     }
 }
-function getActions(measure) {
+function getActions(song, measure) {
     let actionContext = {
         Measure: measure,
-        Song: this
+        Song: song
     };
     let actions = {
-        improvises: improvises.bind(actionContext),
-        plays: plays.bind(actionContext),
-        repeats: repeats.bind(actionContext)
+        improvises: function (improvisable) {
+            return improvises(actionContext, improvisable);
+        },
+        plays: function (playable) {
+            return plays(actionContext, playable);
+        },
+        repeats: function (repeatable, config) {
+            return repeats(actionContext, repeatable, config);
+        }
     };
     return actions;
 }

@@ -1,4 +1,4 @@
-import { blackswan } from '../dist/base';
+import { blackswan } from '../source/base';
 
 let song = blackswan.song('one note');
 

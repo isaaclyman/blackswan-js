@@ -5,7 +5,7 @@
     "sourceMap": true,
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": "./source",
+    "rootDir": "./",
     "strict": true,
     "noImplicitAny": true,
     "alwaysStrict": true,

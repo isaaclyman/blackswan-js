@@ -21,7 +21,7 @@ let Base = (function (window) {
         return song;
     }
     function getActions(measure) {
-        return Scheduler.GetActions.apply(this, [measure]);
+        return Scheduler.GetActions(this, measure);
     }
     function setTimeSignature(numerator, denominator) {
         let timeSignature = {

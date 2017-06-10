@@ -1,0 +1,30 @@
+{
+  "name": "muzak-js",
+  "version": "0.0.1",
+  "description": "A library for expressive music creation with JavaScript",
+  "main": "webpack.config.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "ts-loader": "^2.1.0",
+    "webpack": "^2.6.1"
+  },
+  "devDependencies": {
+    "ts-loader": "^2.1.0",
+    "webpack": "^2.6.1"
+  },
+  "scripts": {
+    "watch": "webpack --config ./webpack.config.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaaclyman/muzak-js.git"
+  },
+  "author": "Isaac Lyman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/isaaclyman/muzak-js/issues"
+  },
+  "homepage": "https://github.com/isaaclyman/muzak-js#readme"
+}

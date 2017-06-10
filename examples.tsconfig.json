@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2015",
-    "module": "None",
+    "module": "ES6",
     "sourceMap": true,
     "outDir": "./examples/compiled",
-    "rootDir": "./examples",
+    "rootDirs": "./",
     "strict": true,
     "noImplicitAny": true,
     "alwaysStrict": true,
@@ -12,7 +12,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "moduleResolution": "Node",
-    "baseUrl": "./",
+    "baseUrl": "../",
     "paths": {}
   },
   "include": [
