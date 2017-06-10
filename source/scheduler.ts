@@ -80,7 +80,11 @@ function getTracks(context: ActionContext, playable: TimedNote|TimedChord|Sequen
     };
     return [track];
   } else {
-    return playable.map((item) => {
+    return playable.map((item, index) => {
+      if (index > 0) {
+        context.Measure += playable[index - 1].Duration;
+      }
+      
       if (Validate.isTimedNote(item)) {
         return getTracks(context, item);
       } else if (Validate.isTimedChord(item)) {

@@ -17,11 +17,17 @@ let _context = new AudioContext();
 function defaultGain(style: Style[]): GainNode {
   let gainNode = _context.createGain();
 
-  for (var st of style) {
-    let dynamics: number = (<any>StyleDynamics)[st];
+  var hasDynamics = style.some((st) => {
+    let dynamics: number = StyleDynamics[st];
     if (dynamics) {
       gainNode.gain.value = dynamics;
+      return true;
     }
+    return false;
+  });
+
+  if (!hasDynamics) {
+    gainNode.gain.value = 0.5;
   }
 
   return gainNode;
@@ -71,12 +77,17 @@ function synthesizeNote(frequency: number, style: Style[]): Note {
   return note;
 }
 
+function setGain(gain: (style: Style[]) => GainNode): void {
+  _gain = gain;
+}
+
 function setOscillator(oscillator: (frequency: number) => OscillatorNode): void {
   _oscillator = oscillator;
 }
 
 var Synth = {
   Context: _context,
+  SetGain: setGain,
   SetOscillator: setOscillator,
   SynthesizeNote: synthesizeNote,
 };

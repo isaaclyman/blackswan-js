@@ -1,9 +1,11 @@
+import { Song } from '../source/song';
 import { blackswan } from '../source/base';
 
-let song = blackswan.song('one note');
+let mysong = blackswan.song('one note');
 
 // Default tempo and time signature will be fine.
 
-song.at(0).plays(blackswan.note('c4', 4));
+// Play c4 for two seconds (four measures)
+mysong.at(0).plays(blackswan.note('c4', 4));
 
-song.play();
+export { mysong }

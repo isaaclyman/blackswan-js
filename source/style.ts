@@ -10,8 +10,8 @@ enum Style {
   Fortissimo
 };
 
-interface StyleDynamicsDict {
-  [style: Style]: number;
+export interface StyleDynamicsDict {
+  [style: number]: number;
 }
 
 let StyleDynamics: StyleDynamicsDict = {

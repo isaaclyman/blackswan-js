@@ -9,7 +9,8 @@ declare enum Style {
     Forte = 7,
     Fortissimo = 8,
 }
-declare let StyleDynamics: {
-    [style: Style]: number;
-};
+export interface StyleDynamicsDict {
+    [style: number]: number;
+}
+declare let StyleDynamics: StyleDynamicsDict;
 export { Style, StyleDynamics };
