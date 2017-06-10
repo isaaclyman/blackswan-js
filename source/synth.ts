@@ -46,23 +46,10 @@ function setOscillator(oscillator: (frequency: number) => OscillatorNode): void 
   _oscillator = oscillator;
 }
 
-function playNote(note: Note): void {
-  // Should probably connect sooner and disconnect later...
-  //  depends on what gives the best performance
-  note.Oscillator.connect(_context.destination);
-  note.Oscillator.start(0);
-}
-
-function stopNote(note: Note): void {
-  note.Oscillator.stop();
-  note.Oscillator.disconnect(_context.destination);
-}
-
 var Synth = {
+  Context: _context,
   SetOscillator: setOscillator,
-  StopNote: stopNote,
   SynthesizeNote: synthesizeNote,
-  PlayNote: playNote,
 };
 
 export { Synth };

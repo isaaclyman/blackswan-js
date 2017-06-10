@@ -26,11 +26,12 @@ export interface TimedChord extends Moment {
 export interface TimedNote extends Moment {
     Note: Note;
 }
-export interface Track extends Moment {
+export interface Track {
     Notes: Note[];
-    RelativeWhen: number;
+    WhenSeconds: number;
+    DurationSeconds: number;
 }
 declare let Scheduler: {
-    GetActions: (measure: number, song: Song) => Actions;
+    GetActions: (this: Song, measure: number) => Actions;
 };
 export { Scheduler };

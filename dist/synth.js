@@ -25,21 +25,10 @@ function synthesizeNote(frequency, articulation) {
 function setOscillator(oscillator) {
     _oscillator = oscillator;
 }
-function playNote(note) {
-    // Should probably connect sooner and disconnect later...
-    //  depends on what gives the best performance
-    note.Oscillator.connect(_context.destination);
-    note.Oscillator.start(0);
-}
-function stopNote(note) {
-    note.Oscillator.stop();
-    note.Oscillator.disconnect(_context.destination);
-}
 var Synth = {
+    Context: _context,
     SetOscillator: setOscillator,
-    StopNote: stopNote,
     SynthesizeNote: synthesizeNote,
-    PlayNote: playNote,
 };
 export { Synth };
 //# sourceMappingURL=synth.js.map

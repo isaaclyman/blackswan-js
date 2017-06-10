@@ -6,28 +6,28 @@ function plays(playable) {
 }
 function repeats(repeatable, config) {
 }
-function getRelativeWhen(measure, song) {
+function measuresToSeconds(measures, song) {
     let beatsPerMinute = song._metadata.Tempo;
     let secondsPerMinute = 60;
     let beatsPerSecond = beatsPerMinute / secondsPerMinute;
     let beatsPerMeasure = song._metadata.TimeSignature.beatsPerMeasure;
-    return (beatsPerSecond / beatsPerMeasure) * measure;
+    return (beatsPerSecond / beatsPerMeasure) * measures;
 }
 function getTracks(context, playable) {
-    let relativeWhen = getRelativeWhen(context.Measure, context.Song);
+    let WhenSeconds = measuresToSeconds(context.Measure, context.Song);
     if (Validate.isTimedNote(playable)) {
         let track = {
             Notes: [playable.Note],
-            Duration: playable.Duration,
-            RelativeWhen: relativeWhen
+            DurationSeconds: measuresToSeconds(playable.Duration, context.Song),
+            WhenSeconds: WhenSeconds
         };
         return [track];
     }
     else if (Validate.isTimedChord(playable)) {
         let track = {
             Notes: playable.Notes,
-            Duration: playable.Duration,
-            RelativeWhen: relativeWhen
+            DurationSeconds: measuresToSeconds(playable.Duration, context.Song),
+            WhenSeconds: WhenSeconds
         };
         return [track];
     }
@@ -42,18 +42,18 @@ function getTracks(context, playable) {
             else {
                 let track = {
                     Notes: [],
-                    Duration: item.Duration,
-                    RelativeWhen: relativeWhen
+                    DurationSeconds: measuresToSeconds(item.Duration, context.Song),
+                    WhenSeconds: WhenSeconds
                 };
                 return [track];
             }
         }).reduce((a, b) => a.concat(b));
     }
 }
-function getActions(measure, song) {
+function getActions(measure) {
     let actionContext = {
         Measure: measure,
-        Song: song
+        Song: this
     };
     let actions = {
         improvises: improvises.bind(actionContext),

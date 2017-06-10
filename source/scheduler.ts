@@ -34,9 +34,10 @@ export interface TimedNote extends Moment {
   Note: Note,
 }
 
-export interface Track extends Moment {
+export interface Track {
   Notes: Note[],
-  RelativeWhen: number, // in seconds
+  WhenSeconds: number, // in seconds
+  DurationSeconds: number, // also in seconds
 }
 
 function improvises(this: ActionContext, scale: any[]) {
@@ -48,33 +49,33 @@ function plays(this: ActionContext, playable: TimedNote|TimedChord|Sequence): vo
 }
 
 function repeats(this: ActionContext, repeatable: TimedNote|TimedChord, config: RepeatConfig): void {
-  
+
 }
 
-function getRelativeWhen(measure: number, song: Song): number {
+function measuresToSeconds(measures: number, song: Song): number {
   let beatsPerMinute = song._metadata.Tempo;
   let secondsPerMinute = 60;
   let beatsPerSecond = beatsPerMinute / secondsPerMinute;
   let beatsPerMeasure = song._metadata.TimeSignature.beatsPerMeasure;
 
-  return (beatsPerSecond / beatsPerMeasure) * measure;
+  return (beatsPerSecond / beatsPerMeasure) * measures;
 }
 
 function getTracks(context: ActionContext, playable: TimedNote|TimedChord|Sequence): Track[] {
-  let relativeWhen = getRelativeWhen(context.Measure, context.Song);
+  let WhenSeconds = measuresToSeconds(context.Measure, context.Song);
 
   if (Validate.isTimedNote(playable)) {
     let track: Track = {
       Notes: [playable.Note],
-      Duration: playable.Duration,
-      RelativeWhen: relativeWhen
+      DurationSeconds: measuresToSeconds(playable.Duration, context.Song),
+      WhenSeconds: WhenSeconds
     };
     return [track];
   } else if (Validate.isTimedChord(playable)) {
     let track: Track = {
       Notes: playable.Notes,
-      Duration: playable.Duration,
-      RelativeWhen: relativeWhen
+      DurationSeconds: measuresToSeconds(playable.Duration, context.Song),
+      WhenSeconds: WhenSeconds
     };
     return [track];
   } else {
@@ -86,8 +87,8 @@ function getTracks(context: ActionContext, playable: TimedNote|TimedChord|Sequen
       } else {
         let track: Track = {
           Notes: [],
-          Duration: item.Duration,
-          RelativeWhen: relativeWhen
+          DurationSeconds: measuresToSeconds(item.Duration, context.Song),
+          WhenSeconds: WhenSeconds
         };
         return [track];
       }
@@ -95,10 +96,10 @@ function getTracks(context: ActionContext, playable: TimedNote|TimedChord|Sequen
   }
 }
 
-function getActions(measure: number, song: Song): Actions {
+function getActions(this: Song, measure: number): Actions {
   let actionContext: ActionContext = {
     Measure: measure,
-    Song: song
+    Song: this
   };
 
   let actions: Actions = {

@@ -1,6 +1,7 @@
 // This file contains the external interface for blackswan.js
 import { Articulation } from './articulation';
 import { Notes } from './notes';
+import { Player } from './player';
 import { Actions, Rest, Scheduler, Sequence, TimedChord, TimedNote } from './scheduler';
 import { DefaultSongData, Song, TimeSignature } from './song';
 import { Synth } from './synth';
@@ -14,7 +15,7 @@ let Base = (function (window) {
 
     let song: Song = {
       at: getActions,
-      play: play,
+      play: Player.play,
       setTimeSignature: setTimeSignature,
       setTempo: setTempo,
       _master: [],
@@ -25,11 +26,7 @@ let Base = (function (window) {
   }
 
   function getActions(this: Song, measure: number): Actions {
-    return Scheduler.GetActions(measure, this);
-  }
-
-  function play(this: Song) {
-
+    return Scheduler.GetActions.apply(this, [measure]);
   }
 
   function setTimeSignature(this: Song, numerator: number, denominator: number): void {
