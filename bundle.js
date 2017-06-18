@@ -172,20 +172,33 @@ function defaultOscillator(frequency) {
     oscillator.type = 'sine';
     return oscillator;
 }
-let _oscillator = defaultOscillator;
+function defaultPlayer(note, startSeconds, stopSeconds) {
+    let nodes = note.GetNoteNodes();
+    nodes.Gain.gain.setTargetAtTime(0, stopSeconds - 0.04, 0.02);
+    nodes.Oscillator.start(startSeconds);
+    nodes.Oscillator.stop(stopSeconds);
+}
 let _gain = defaultGain;
+let _oscillator = defaultOscillator;
+let _player = defaultPlayer;
 function synthesizeNote(frequency, style) {
-    let gain = _gain(style);
-    gain.connect(_context.destination);
     let note = {
         Frequency: frequency,
-        Gain: gain,
-        GetOscillator: function () {
+        GetNoteNodes: function () {
+            let gain = _gain(style);
+            gain.connect(_context.destination);
             // No need to disconnect a previous oscillator, since the browser
             //  disposes them once Node.stop() is called.
             let oscillator = _oscillator(frequency);
-            oscillator.connect(this.Gain);
-            return oscillator;
+            oscillator.connect(gain);
+            let nodes = {
+                Gain: gain,
+                Oscillator: oscillator
+            };
+            return nodes;
+        },
+        Play: function (startSeconds, stopSeconds) {
+            _player(this, startSeconds, stopSeconds);
         },
         Style: style,
     };
@@ -197,10 +210,14 @@ function setGain(gain) {
 function setOscillator(oscillator) {
     _oscillator = oscillator;
 }
+function setPlayer(player) {
+    _player = player;
+}
 let Synth = {
     Context: _context,
     SetGain: setGain,
     SetOscillator: setOscillator,
+    SetPlayer: setPlayer,
     SynthesizeNote: synthesizeNote,
 };
 
@@ -481,9 +498,7 @@ function playAt(note, whenSeconds, durationSeconds, startingAtSeconds = 0) {
     if (stopSeconds === 0) {
         return;
     }
-    let oscillator = note.GetOscillator();
-    oscillator.start(startSeconds);
-    oscillator.stop(stopSeconds);
+    note.Play(startSeconds, stopSeconds);
 }
 let Player = {
     play

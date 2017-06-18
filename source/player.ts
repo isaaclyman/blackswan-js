@@ -26,10 +26,7 @@ function playAt(note: Note, whenSeconds: number, durationSeconds: number, starti
     return;
   }
 
-  let oscillator = note.GetOscillator();
-
-  oscillator.start(startSeconds);
-  oscillator.stop(stopSeconds);
+  note.Play(startSeconds, stopSeconds);
 }
 
 let Player = {

@@ -7,9 +7,14 @@ import { Style, StyleDynamics } from './style';
 
 export interface Note {
   Frequency: number;
-  Gain: GainNode;
-  GetOscillator: (this: Note) => OscillatorNode;
+  GetNoteNodes: (this: Note) => NoteNodes;
+  Play: (this: Note, startSeconds: number, stopSeconds: number) => void;
   Style: Style[];
+}
+
+export interface NoteNodes {
+  Gain: GainNode;
+  Oscillator: OscillatorNode;
 }
 
 let _context = new AudioContext();
@@ -40,22 +45,39 @@ function defaultOscillator(frequency: number): OscillatorNode {
   return oscillator;
 }
 
-let _oscillator = defaultOscillator;
+function defaultPlayer(note: Note, startSeconds: number, stopSeconds: number): void {
+  let nodes = note.GetNoteNodes();
+
+  nodes.Gain.gain.setTargetAtTime(0, stopSeconds - 0.04, 0.02);
+
+  nodes.Oscillator.start(startSeconds);
+  nodes.Oscillator.stop(stopSeconds);
+}
+
 let _gain = defaultGain;
+let _oscillator = defaultOscillator;
+let _player = defaultPlayer;
 
 function synthesizeNote(frequency: number, style: Style[]): Note {
-  let gain = _gain(style);
-  gain.connect(_context.destination);
-
   let note: Note = {
     Frequency: frequency,
-    Gain: gain,
-    GetOscillator: function(this: Note) {
+    GetNoteNodes: function(this: Note): NoteNodes {
+      let gain = _gain(style);
+      gain.connect(_context.destination);
       // No need to disconnect a previous oscillator, since the browser
       //  disposes them once Node.stop() is called.
       let oscillator = _oscillator(frequency);
-      oscillator.connect(this.Gain);
-      return oscillator;
+      oscillator.connect(gain);
+
+      let nodes: NoteNodes = {
+        Gain: gain,
+        Oscillator: oscillator
+      };
+
+      return nodes;
+    },
+    Play: function(this: Note, startSeconds: number, stopSeconds: number): void {
+      _player(this, startSeconds, stopSeconds);
     },
     Style: style,
   };
@@ -71,10 +93,15 @@ function setOscillator(oscillator: (frequency: number) => OscillatorNode): void 
   _oscillator = oscillator;
 }
 
+function setPlayer(player: (note: Note, startSeconds: number, stopSeconds: number) => void) {
+  _player = player;
+}
+
 let Synth = {
   Context: _context,
   SetGain: setGain,
   SetOscillator: setOscillator,
+  SetPlayer: setPlayer,
   SynthesizeNote: synthesizeNote,
 };
 
