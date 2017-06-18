@@ -3,7 +3,8 @@ import { blackswan } from '../source/base';
 
 let mysong = blackswan.song('La Cucaracha');
 
-// Default tempo and time signature will be fine.
+// Kick up the tempo, arriba!
+mysong.setTempo(200);
 
 let la = blackswan.note('c4', 0.5);
 let cu = la;

@@ -275,9 +275,9 @@ let Validate = {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__improvise__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__ = __webpack_require__(13);
 
-__WEBPACK_IMPORTED_MODULE_0__improvise__["a" /* mysong */].play();
+__WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__["a" /* mysong */].play();
 
 
 /***/ }),
@@ -645,27 +645,7 @@ function DefaultSongData() {
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(6);
-
-let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('improvise');
-// Default tempo and time signature will be fine.
-let scale = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].scale([
-    'c4', 'e4', 'f4', 'g4', 'c5',
-    ['e4', 'g4']
-], {
-    durations: [0.5, 0.5, 1],
-    style: []
-});
-mysong.at(0).improvises(scale, 8);
-
-
-
-/***/ }),
+/* 11 */,
 /* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -709,6 +689,38 @@ let Improviser = {
     improvise,
     setImproviser
 };
+
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(6);
+
+let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('La Cucaracha');
+// Kick up the tempo, arriba!
+mysong.setTempo(200);
+let la = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 0.5);
+let cu = la;
+let ca = cu;
+let ra = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 1.5);
+let cha = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('a4', 1);
+let climb = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 1);
+let ing = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 0.5);
+let up = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('e4', 0.5);
+let and = up;
+let down = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('d4', 0.5);
+let the = down;
+let wall = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 1.5);
+let sequence = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].sequence([
+    la, cu, ca, ra, cha, la, cu, ca, ra, cha,
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].rest(1.5),
+    climb, ing, up, and, down, the, wall
+]);
+mysong.at(0).plays(sequence);
 
 
 
