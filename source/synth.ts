@@ -48,10 +48,12 @@ function defaultOscillator(frequency: number): OscillatorNode {
 function defaultPlayer(note: Note, startSeconds: number, stopSeconds: number): void {
   let nodes = note.GetNoteNodes();
 
+  nodes.Gain.gain.setTargetAtTime(nodes.Gain.gain.value, startSeconds, 0.02);
+  nodes.Gain.gain.value = 0;
   nodes.Gain.gain.setTargetAtTime(0, stopSeconds - 0.04, 0.02);
 
   nodes.Oscillator.start(startSeconds);
-  nodes.Oscillator.stop(stopSeconds);
+  nodes.Oscillator.stop(stopSeconds + 0.04);
 }
 
 let _gain = defaultGain;
