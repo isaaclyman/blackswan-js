@@ -43,23 +43,7 @@ function defaultOscillator(frequency: number): OscillatorNode {
 let _oscillator = defaultOscillator;
 let _gain = defaultGain;
 
-let _memoizedNotes: Note[] = [];
-
-function getMemoizedNote(frequency: number, style: Style[]): Note | undefined {
-  return _memoizedNotes.find(
-    (note) => note.Frequency === frequency && note.Style.every(
-      (art) => !!~style.indexOf(art)
-    )
-  );
-}
-
 function synthesizeNote(frequency: number, style: Style[]): Note {
-  let memoizedNote = getMemoizedNote(frequency, style);
-
-  if (memoizedNote) {
-    return memoizedNote;
-  }
-
   let gain = _gain(style);
   let oscillator = _oscillator(frequency);
   oscillator.connect(gain);
@@ -71,8 +55,6 @@ function synthesizeNote(frequency: number, style: Style[]): Note {
     Oscillator: oscillator,
     Style: style,
   };
-
-  _memoizedNotes.push(note);
 
   return note;
 }

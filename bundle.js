@@ -174,15 +174,7 @@ function defaultOscillator(frequency) {
 }
 let _oscillator = defaultOscillator;
 let _gain = defaultGain;
-let _memoizedNotes = [];
-function getMemoizedNote(frequency, style) {
-    return _memoizedNotes.find((note) => note.Frequency === frequency && note.Style.every((art) => !!~style.indexOf(art)));
-}
 function synthesizeNote(frequency, style) {
-    let memoizedNote = getMemoizedNote(frequency, style);
-    if (memoizedNote) {
-        return memoizedNote;
-    }
     let gain = _gain(style);
     let oscillator = _oscillator(frequency);
     oscillator.connect(gain);
@@ -193,7 +185,6 @@ function synthesizeNote(frequency, style) {
         Oscillator: oscillator,
         Style: style,
     };
-    _memoizedNotes.push(note);
     return note;
 }
 function setGain(gain) {
@@ -255,36 +246,15 @@ let Validate = {
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(6);
-
-let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('sequence');
-// Default tempo and time signature will be fine.
-let sequence = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].sequence([
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 1),
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('d4', 1),
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('e4', 1),
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].rest(1),
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 1)
-]);
-// Play c4 for two seconds (four measures)
-mysong.at(0).plays(sequence);
-
-
-
-/***/ }),
+/* 4 */,
 /* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_a_sequence__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_chords__ = __webpack_require__(11);
 
-__WEBPACK_IMPORTED_MODULE_0__play_a_sequence__["a" /* mysong */].play();
+__WEBPACK_IMPORTED_MODULE_0__play_chords__["a" /* mysong */].play();
 
 
 /***/ }),
@@ -614,6 +584,28 @@ function DefaultSongData() {
     };
     return metadata;
 }
+
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(6);
+
+let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('chords');
+// Default tempo and time signature will be fine.
+let sequence = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].sequence([
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['c4', 'e4', 'g4'], 1),
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['d4', 'f4', 'a4'], 1),
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['e4', 'g4', 'b4'], 1),
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].rest(1),
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['f4', 'a4', 'c5'], 1)
+]);
+// Play c4 for two seconds (four measures)
+mysong.at(0).plays(sequence);
 
 
 
