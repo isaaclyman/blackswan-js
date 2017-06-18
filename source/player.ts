@@ -11,8 +11,8 @@ function pause(this: Song) {
 function play(this: Song) {
   _lastPaused = 0;
 
-  for (var track of this._master) {
-    for (var note of track.Notes) {
+  for (let track of this._master) {
+    for (let note of track.Notes) {
       playAt(note, track.WhenSeconds, track.DurationSeconds);
     }
   }

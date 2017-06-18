@@ -1,5 +1,6 @@
 // This file contains the external interface for blackswan.js
 import { Style } from './style';
+import { Scale, ImproviseConfig } from './improviser';
 import { Notes } from './notes';
 import { Player } from './player';
 import { Actions, Rest, Scheduler, Sequence, TimedChord, TimedNote } from './scheduler';
@@ -65,6 +66,16 @@ let Base = (function (window) {
     } as Rest;
   }
 
+  function scale(playables: Array<string|Array<string>>, config?: ImproviseConfig) {
+    return {
+      Config: config || {
+        durations: [1],
+        style: []
+      },
+      Playables: playables
+    } as Scale;
+  }
+
   function sequence(sequence: Sequence): Sequence {
     return sequence;
   }
@@ -74,6 +85,7 @@ let Base = (function (window) {
     chord,
     note,
     rest,
+    scale,
     sequence,
     song: createSong,
   };

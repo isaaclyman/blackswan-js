@@ -153,7 +153,7 @@ let StyleDynamics = {
 let _context = new AudioContext();
 function defaultGain(style) {
     let gainNode = _context.createGain();
-    var hasDynamics = style.some((st) => {
+    let hasDynamics = style.some((st) => {
         let dynamics = __WEBPACK_IMPORTED_MODULE_0__style__["b" /* StyleDynamics */][st];
         if (dynamics) {
             gainNode.gain.value = dynamics;
@@ -197,7 +197,7 @@ function setGain(gain) {
 function setOscillator(oscillator) {
     _oscillator = oscillator;
 }
-var Synth = {
+let Synth = {
     Context: _context,
     SetGain: setGain,
     SetOscillator: setOscillator,
@@ -256,9 +256,9 @@ let Validate = {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__repeat__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__ = __webpack_require__(13);
 
-__WEBPACK_IMPORTED_MODULE_0__repeat__["a" /* mysong */].play();
+__WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__["a" /* mysong */].play();
 
 
 /***/ }),
@@ -327,6 +327,15 @@ let Base = (function (window) {
             Duration: duration
         };
     }
+    function scale(playables, config) {
+        return {
+            Config: config || {
+                durations: [1],
+                style: []
+            },
+            Playables: playables
+        };
+    }
     function sequence(sequence) {
         return sequence;
     }
@@ -335,6 +344,7 @@ let Base = (function (window) {
         chord,
         note,
         rest,
+        scale,
         sequence,
         song: createSong,
     };
@@ -459,8 +469,8 @@ function pause() {
 }
 function play() {
     _lastPaused = 0;
-    for (var track of this._master) {
-        for (var note of track.Notes) {
+    for (let track of this._master) {
+        for (let note of track.Notes) {
             playAt(note, track.WhenSeconds, track.DurationSeconds);
         }
     }
@@ -487,9 +497,13 @@ let Player = {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Scheduler; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__validate__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__improviser__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__validate__ = __webpack_require__(3);
 
-function improvises(context, scale) {
+
+function improvises(context, improvisable, duration) {
+    let improvisedSequence = __WEBPACK_IMPORTED_MODULE_0__improviser__["a" /* Improviser */].improvise(improvisable, duration);
+    plays(context, improvisedSequence);
 }
 function plays(context, playable) {
     let tracksToAdd = getTracks(context, playable);
@@ -498,7 +512,7 @@ function plays(context, playable) {
 function repeats(context, repeatable, config) {
     let tracksToAdd = [];
     let baseTrack = getTracks(context, repeatable)[0];
-    for (var index = 0; index < config.times; index++) {
+    for (let index = 0; index < config.times; index++) {
         let track = {
             Notes: baseTrack.Notes,
             DurationSeconds: baseTrack.DurationSeconds,
@@ -507,6 +521,10 @@ function repeats(context, repeatable, config) {
         tracksToAdd.push(track);
     }
     context.Song._master = context.Song._master.concat(tracksToAdd);
+}
+function beatsToMeasures(beats, song) {
+    let beatsPerMeasure = song._metadata.TimeSignature.beatsPerMeasure;
+    return (1 / beatsPerMeasure) * beats;
 }
 function beatsToSeconds(beats, song) {
     let beatsPerMinute = song._metadata.Tempo;
@@ -524,7 +542,7 @@ function measuresToSeconds(measures, song) {
 }
 function getTracks(context, playable) {
     let WhenSeconds = measuresToSeconds(context.Measure, context.Song);
-    if (__WEBPACK_IMPORTED_MODULE_0__validate__["a" /* Validate */].isTimedNote(playable)) {
+    if (__WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].isTimedNote(playable)) {
         let track = {
             Notes: [playable.Note],
             DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
@@ -532,7 +550,7 @@ function getTracks(context, playable) {
         };
         return [track];
     }
-    else if (__WEBPACK_IMPORTED_MODULE_0__validate__["a" /* Validate */].isTimedChord(playable)) {
+    else if (__WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].isTimedChord(playable)) {
         let track = {
             Notes: playable.Notes,
             DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
@@ -543,12 +561,12 @@ function getTracks(context, playable) {
     else {
         return playable.map((item, index) => {
             if (index > 0) {
-                context.Measure += playable[index - 1].Duration;
+                context.Measure += beatsToMeasures(playable[index - 1].Duration, context.Song);
             }
-            if (__WEBPACK_IMPORTED_MODULE_0__validate__["a" /* Validate */].isTimedNote(item)) {
+            if (__WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].isTimedNote(item)) {
                 return getTracks(context, item);
             }
-            else if (__WEBPACK_IMPORTED_MODULE_0__validate__["a" /* Validate */].isTimedChord(item)) {
+            else if (__WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].isTimedChord(item)) {
                 return getTracks(context, item);
             }
             else {
@@ -568,8 +586,8 @@ function getActions(song, measure) {
         Song: song
     };
     let actions = {
-        improvises: function (improvisable) {
-            return improvises(actionContext, improvisable);
+        improvises: function (improvisable, duration) {
+            return improvises(actionContext, improvisable, duration);
         },
         plays: function (playable) {
             return plays(actionContext, playable);
@@ -615,16 +633,76 @@ function DefaultSongData() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Improviser; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(6);
+
+function getRandomElement(elements) {
+    // maximum is exclusive here, so highest number returned will be
+    //  (notes.length - 1)
+    let max = elements.length;
+    let index = Math.floor(Math.random() * max);
+    return elements[index];
+}
+let _improviser = function getImprovisedSequence(scale, duration) {
+    let cursor = 0;
+    let nextDuration = getRandomElement(scale.Config.durations);
+    let sequence = [];
+    while (cursor + nextDuration < duration) {
+        let nextPlay = getRandomElement(scale.Playables);
+        if (Array.isArray(nextPlay)) {
+            let nextChord = __WEBPACK_IMPORTED_MODULE_0__base__["a" /* blackswan */].chord(nextPlay, nextDuration, ...scale.Config.style);
+            sequence.push(nextChord);
+        }
+        else {
+            let nextNote = __WEBPACK_IMPORTED_MODULE_0__base__["a" /* blackswan */].note(nextPlay, nextDuration, ...scale.Config.style);
+            sequence.push(nextNote);
+        }
+        cursor += nextDuration;
+        nextDuration = getRandomElement(scale.Config.durations);
+    }
+    return sequence;
+};
+function improvise(scale, duration) {
+    return _improviser(scale, duration);
+}
+function setImproviser(improviser) {
+    _improviser = improviser;
+}
+let Improviser = {
+    improvise,
+    setImproviser
+};
+
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(6);
 
-let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('repeats');
+let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('La Cucaracha');
 // Default tempo and time signature will be fine.
-let note = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 1);
-let chord = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['c4', 'e4', 'g4'], 1);
-// Repeat c4 four times, then repeat the chord twice
-mysong.at(0).repeats(note, { every: 1, times: 4 });
-mysong.at(1).repeats(chord, { every: 1, times: 2 });
+let la = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 0.5);
+let cu = la;
+let ca = cu;
+let ra = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 1.5);
+let cha = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('a4', 1);
+let climb = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 1);
+let ing = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 0.5);
+let up = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('e4', 0.5);
+let and = up;
+let down = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('d4', 0.5);
+let the = down;
+let wall = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 1.5);
+let sequence = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].sequence([
+    la, cu, ca, ra, cha, la, cu, ca, ra, cha,
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].rest(1.5),
+    climb, ing, up, and, down, the, wall
+]);
+mysong.at(0).plays(sequence);
 
 
 

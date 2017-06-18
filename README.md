@@ -48,21 +48,21 @@ var lowerRiff = blackswan.sequence([
 ]);
 
 // Defining a set of notes to use for later improvisation
-// blackswan.scale: pass in an array of notes and chords to improvise with
-//  and an optional configuration object
+// blackswan.scale: pass in an array of notes (or chords, as nested arrays of notes)
+//  to improvise with and an optional configuration object
 var lowerScale = blackswan.scale([
   'b2', 'c3', 'e3', 'f3', 'g3', 'c4',
 ], {
-  // minDuration: the shortest duration that a note should play, in number of beats
-  //  defaults to 1
-  minDuration: 0.5,
-  // maxDuration: the longest duration that a note should play, in number of beats
-  //  defaults to 1
-  maxDuration: 1,
-  // syncEvery: how often the improv should be required to sync up with
-  //  the beat, in number of beats
-  //  defaults to the number of beats in a measure
-  syncEvery: 4
+  // durations: an array of note durations, in number of beats, that the
+  //  improviser may select from for each note. To make some durations more
+  //  common than others, repeat them in the array. For example, in this case,
+  //  a quarter note will be twice as common as a half note or a whole note,
+  //  when using the default improviser.
+  // Default is [1].
+  durations: [0.25, 0.25, 0.5, 1],
+  // style: an array of blackswan.as configuration parameters
+  // Default is [].
+  style: [blackswan.as.staccato]
 });
 
 // blackswan.song.at: pass in the measure to start from

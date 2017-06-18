@@ -1,3 +1,4 @@
+import { Improviser, Scale } from './improviser';
 import { Song } from './song';
 import { Note } from './synth';
 import { Validate } from './validate';
@@ -8,7 +9,7 @@ export interface ActionContext {
 }
 
 export interface Actions {
-  improvises: (improvisable: any) => void,
+  improvises: (improvisable: Scale, duration: number) => void,
   plays: (playable: TimedNote|TimedChord|Sequence) => void,
   repeats: (repeatable: TimedNote|TimedChord, config: RepeatConfig) => void,
 }
@@ -40,8 +41,9 @@ export interface Track {
   DurationSeconds: number, // also in seconds
 }
 
-function improvises(context: ActionContext, scale: any[]) {
-
+function improvises(context: ActionContext, improvisable: Scale, duration: number): void {
+  let improvisedSequence = Improviser.improvise(improvisable, duration);
+  plays(context, improvisedSequence);
 }
 
 function plays(context: ActionContext, playable: TimedNote|TimedChord|Sequence): void {
@@ -53,7 +55,7 @@ function repeats(context: ActionContext, repeatable: TimedNote|TimedChord, confi
   let tracksToAdd: Track[] = [];
   let baseTrack: Track = getTracks(context, repeatable)[0];
 
-  for (var index = 0; index < config.times; index++) {
+  for (let index = 0; index < config.times; index++) {
     let track: Track = {
       Notes: baseTrack.Notes,
       DurationSeconds: baseTrack.DurationSeconds,
@@ -63,6 +65,12 @@ function repeats(context: ActionContext, repeatable: TimedNote|TimedChord, confi
   }
 
   context.Song._master = context.Song._master.concat(tracksToAdd);
+}
+
+function beatsToMeasures(beats: number, song: Song): number {
+  let beatsPerMeasure = song._metadata.TimeSignature.beatsPerMeasure;
+
+  return (1 / beatsPerMeasure) * beats;
 }
 
 function beatsToSeconds(beats: number, song: Song): number {
@@ -103,7 +111,7 @@ function getTracks(context: ActionContext, playable: TimedNote|TimedChord|Sequen
   } else {
     return playable.map((item, index) => {
       if (index > 0) {
-        context.Measure += playable[index - 1].Duration;
+        context.Measure += beatsToMeasures(playable[index - 1].Duration, context.Song);
       }
 
       if (Validate.isTimedNote(item)) {
@@ -129,8 +137,8 @@ function getActions(song: Song, measure: number): Actions {
   };
 
   let actions: Actions = {
-    improvises: function(improvisable: any) {
-      return improvises(actionContext, improvisable);
+    improvises: function(improvisable: Scale, duration: number) {
+      return improvises(actionContext, improvisable, duration);
     },
     plays: function (playable: TimedNote|TimedChord|Sequence) {
       return plays(actionContext, playable);

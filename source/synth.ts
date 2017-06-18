@@ -17,7 +17,7 @@ let _context = new AudioContext();
 function defaultGain(style: Style[]): GainNode {
   let gainNode = _context.createGain();
 
-  var hasDynamics = style.some((st) => {
+  let hasDynamics = style.some((st) => {
     let dynamics: number = StyleDynamics[st];
     if (dynamics) {
       gainNode.gain.value = dynamics;
@@ -71,7 +71,7 @@ function setOscillator(oscillator: (frequency: number) => OscillatorNode): void 
   _oscillator = oscillator;
 }
 
-var Synth = {
+let Synth = {
   Context: _context,
   SetGain: setGain,
   SetOscillator: setOscillator,

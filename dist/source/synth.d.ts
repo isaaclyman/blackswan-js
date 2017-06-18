@@ -5,7 +5,7 @@ export interface Note {
     GetOscillator: (this: Note) => OscillatorNode;
     Style: Style[];
 }
-declare var Synth: {
+declare let Synth: {
     Context: AudioContext;
     SetGain: (gain: (style: Style[]) => GainNode) => void;
     SetOscillator: (oscillator: (frequency: number) => OscillatorNode) => void;

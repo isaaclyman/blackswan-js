@@ -1,3 +1,4 @@
+import { Scale } from './improviser';
 import { Song } from './song';
 import { Note } from './synth';
 export interface ActionContext {
@@ -5,7 +6,7 @@ export interface ActionContext {
     Song: Song;
 }
 export interface Actions {
-    improvises: (improvisable: any) => void;
+    improvises: (improvisable: Scale, duration: number) => void;
     plays: (playable: TimedNote | TimedChord | Sequence) => void;
     repeats: (repeatable: TimedNote | TimedChord, config: RepeatConfig) => void;
 }
