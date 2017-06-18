@@ -2,7 +2,7 @@ import { Style } from './style';
 export interface Note {
     Frequency: number;
     Gain: GainNode;
-    Oscillator: OscillatorNode;
+    GetOscillator: (this: Note) => OscillatorNode;
     Style: Style[];
 }
 declare var Synth: {

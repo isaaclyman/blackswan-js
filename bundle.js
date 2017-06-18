@@ -176,13 +176,17 @@ let _oscillator = defaultOscillator;
 let _gain = defaultGain;
 function synthesizeNote(frequency, style) {
     let gain = _gain(style);
-    let oscillator = _oscillator(frequency);
-    oscillator.connect(gain);
     gain.connect(_context.destination);
     let note = {
         Frequency: frequency,
         Gain: gain,
-        Oscillator: oscillator,
+        GetOscillator: function () {
+            // No need to disconnect a previous oscillator, since the browser
+            //  disposes them once Node.stop() is called.
+            let oscillator = _oscillator(frequency);
+            oscillator.connect(this.Gain);
+            return oscillator;
+        },
         Style: style,
     };
     return note;
@@ -252,9 +256,9 @@ let Validate = {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_chords__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__repeat__ = __webpack_require__(12);
 
-__WEBPACK_IMPORTED_MODULE_0__play_chords__["a" /* mysong */].play();
+__WEBPACK_IMPORTED_MODULE_0__repeat__["a" /* mysong */].play();
 
 
 /***/ }),
@@ -464,12 +468,12 @@ function play() {
 function playAt(note, whenSeconds, durationSeconds, startingAtSeconds = 0) {
     let startSeconds = Math.max(whenSeconds - startingAtSeconds, 0);
     let stopSeconds = Math.max((whenSeconds + durationSeconds) - startingAtSeconds, 0);
-    console.log('played', startSeconds, stopSeconds, note.Oscillator);
     if (stopSeconds === 0) {
         return;
     }
-    note.Oscillator.start(startSeconds);
-    note.Oscillator.stop(stopSeconds);
+    let oscillator = note.GetOscillator();
+    oscillator.start(startSeconds);
+    oscillator.stop(stopSeconds);
 }
 let Player = {
     play
@@ -492,20 +496,38 @@ function plays(context, playable) {
     context.Song._master = context.Song._master.concat(tracksToAdd);
 }
 function repeats(context, repeatable, config) {
+    let tracksToAdd = [];
+    let baseTrack = getTracks(context, repeatable)[0];
+    for (var index = 0; index < config.times; index++) {
+        let track = {
+            Notes: baseTrack.Notes,
+            DurationSeconds: baseTrack.DurationSeconds,
+            WhenSeconds: baseTrack.WhenSeconds + (index * beatsToSeconds(config.every, context.Song))
+        };
+        tracksToAdd.push(track);
+    }
+    context.Song._master = context.Song._master.concat(tracksToAdd);
+}
+function beatsToSeconds(beats, song) {
+    let beatsPerMinute = song._metadata.Tempo;
+    let secondsPerMinute = 60;
+    let secondsPerBeat = secondsPerMinute / beatsPerMinute;
+    return secondsPerBeat * beats;
 }
 function measuresToSeconds(measures, song) {
     let beatsPerMinute = song._metadata.Tempo;
     let secondsPerMinute = 60;
     let beatsPerSecond = beatsPerMinute / secondsPerMinute;
     let beatsPerMeasure = song._metadata.TimeSignature.beatsPerMeasure;
-    return (beatsPerSecond / beatsPerMeasure) * measures;
+    let secondsPerMeasure = beatsPerMeasure / beatsPerSecond;
+    return secondsPerMeasure * measures;
 }
 function getTracks(context, playable) {
     let WhenSeconds = measuresToSeconds(context.Measure, context.Song);
     if (__WEBPACK_IMPORTED_MODULE_0__validate__["a" /* Validate */].isTimedNote(playable)) {
         let track = {
             Notes: [playable.Note],
-            DurationSeconds: measuresToSeconds(playable.Duration, context.Song),
+            DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
             WhenSeconds: WhenSeconds
         };
         return [track];
@@ -513,7 +535,7 @@ function getTracks(context, playable) {
     else if (__WEBPACK_IMPORTED_MODULE_0__validate__["a" /* Validate */].isTimedChord(playable)) {
         let track = {
             Notes: playable.Notes,
-            DurationSeconds: measuresToSeconds(playable.Duration, context.Song),
+            DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
             WhenSeconds: WhenSeconds
         };
         return [track];
@@ -532,7 +554,7 @@ function getTracks(context, playable) {
             else {
                 let track = {
                     Notes: [],
-                    DurationSeconds: measuresToSeconds(item.Duration, context.Song),
+                    DurationSeconds: beatsToSeconds(item.Duration, context.Song),
                     WhenSeconds: WhenSeconds
                 };
                 return [track];
@@ -588,24 +610,21 @@ function DefaultSongData() {
 
 
 /***/ }),
-/* 11 */
+/* 11 */,
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(6);
 
-let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('chords');
+let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('repeats');
 // Default tempo and time signature will be fine.
-let sequence = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].sequence([
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['c4', 'e4', 'g4'], 1),
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['d4', 'f4', 'a4'], 1),
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['e4', 'g4', 'b4'], 1),
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].rest(1),
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['f4', 'a4', 'c5'], 1)
-]);
-// Play c4 for two seconds (four measures)
-mysong.at(0).plays(sequence);
+let note = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 1);
+let chord = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['c4', 'e4', 'g4'], 1);
+// Repeat c4 four times, then repeat the chord twice
+mysong.at(0).repeats(note, { every: 1, times: 4 });
+mysong.at(1).repeats(chord, { every: 1, times: 2 });
 
 
 

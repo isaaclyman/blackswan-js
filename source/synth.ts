@@ -8,7 +8,7 @@ import { Style, StyleDynamics } from './style';
 export interface Note {
   Frequency: number;
   Gain: GainNode;
-  Oscillator: OscillatorNode;
+  GetOscillator: (this: Note) => OscillatorNode;
   Style: Style[];
 }
 
@@ -45,14 +45,18 @@ let _gain = defaultGain;
 
 function synthesizeNote(frequency: number, style: Style[]): Note {
   let gain = _gain(style);
-  let oscillator = _oscillator(frequency);
-  oscillator.connect(gain);
   gain.connect(_context.destination);
 
-  let note = {
+  let note: Note = {
     Frequency: frequency,
     Gain: gain,
-    Oscillator: oscillator,
+    GetOscillator: function(this: Note) {
+      // No need to disconnect a previous oscillator, since the browser
+      //  disposes them once Node.stop() is called.
+      let oscillator = _oscillator(frequency);
+      oscillator.connect(this.Gain);
+      return oscillator;
+    },
     Style: style,
   };
 
