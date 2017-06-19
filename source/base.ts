@@ -1,11 +1,18 @@
 // This file contains the external interface for blackswan.js
 import { Style } from './style';
-import { Scale, ImproviseConfig } from './improviser';
+import { Scale, ImproviseConfig, Improviser } from './improviser';
 import { Notes } from './notes';
 import { Player } from './player';
 import { Actions, Rest, Scheduler, Sequence, TimedChord, TimedNote } from './scheduler';
 import { DefaultSongData, Song, TimeSignature } from './song';
-import { Synth } from './synth';
+import { Note, Synth } from './synth';
+
+export interface Settings {
+  setGain: (gain: (style: Style[]) => GainNode) => void;
+  setImproviser: (improviser: (scale: Scale, duration: number) => Sequence) => void;
+  setOscillator: (oscillator: (frequency: number) => OscillatorNode) => void;
+  setPlayer: (player: (note: Note, startSeconds: number, stopSeconds: number) => void) => void;
+}
 
 let Base = (function (window) {
   /* song initializer and instance members */
@@ -80,6 +87,13 @@ let Base = (function (window) {
     return sequence;
   }
 
+  let settings: Settings = {
+    setGain: Synth.SetGain,
+    setImproviser: Improviser.setImproviser,
+    setOscillator: Synth.SetOscillator,
+    setPlayer: Synth.SetPlayer
+  };
+
   let Base = {
     as: Style,
     chord,
@@ -87,6 +101,7 @@ let Base = (function (window) {
     rest,
     scale,
     sequence,
+    settings,
     song: createSong,
   };
 

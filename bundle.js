@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,80 +71,8 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PianoData; });
-// Only sharps are noted here; flats can be converted on-the-fly
-let _noteMap = {
-    'a0': 27.5, 'a#0': 29.1353, 'b0': 30.8677, 'c1': 32.7032, 'c#1': 34.6478,
-    'd1': 36.7081, 'd#1': 38.8909, 'e1': 41.2034, 'f1': 43.6535, 'f#1': 46.2493,
-    'g1': 48.9994, 'g#1': 51.9131, 'a1': 55.0, 'a#1': 58.2705, 'b1': 61.7354,
-    'c2': 65.4064, 'c#2': 69.2957, 'd2': 73.4162, 'd#2': 77.7817, 'e2': 82.4069,
-    'f2': 87.3071, 'f#2': 92.4986, 'g2': 97.9989, 'g#2': 103.826, 'a2': 110.0,
-    'a#2': 116.541, 'b2': 123.471, 'c3': 130.813, 'c#3': 138.591, 'd3': 146.832,
-    'd#3': 155.563, 'e3': 164.814, 'f3': 174.614, 'f#3': 184.997, 'g3': 195.998,
-    'g#3': 207.562, 'a3': 220.0, 'a#3': 233.082, 'b3': 246.942, 'c4': 261.626,
-    'c#4': 277.183, 'd4': 293.665, 'd#4': 311.127, 'e4': 329.628, 'f4': 349.228,
-    'f#4': 369.994, 'g4': 391.995, 'g#4': 415.305, 'a4': 440.0, 'a#4': 466.164,
-    'b4': 493.883, 'c5': 523.251, 'c#5': 554.365, 'd5': 587.330, 'd#5': 622.254,
-    'e5': 659.255, 'f5': 698.456, 'f#5': 739.989, 'g5': 783.991, 'g#5': 830.609,
-    'a5': 880.0, 'a#5': 932.328, 'b5': 987.767, 'c6': 1046.5, 'c#6': 1108.73,
-    'd6': 1174.66, 'd#6': 1244.51, 'e6': 1318.51, 'f6': 1396.91, 'f#6': 1479.98,
-    'g6': 1567.98, 'g#6': 1661.22, 'a6': 1760.0, 'a#6': 1864.66, 'b6': 1975.53,
-    'c7': 2093.00, 'c#7': 2217.46, 'd7': 2349.32, 'd#7': 2489.02, 'e7': 2637.02,
-    'f7': 2793.83, 'f#7': 2959.96, 'g7': 3135.96, 'g#7': 3322.44, 'a7': 3520.0,
-    'a#7': 3729.31, 'b7': 3951.07, 'c8': 4186.01
-};
-let _notes = [
-    'a', 'b', 'c', 'd', 'e', 'f', 'g'
-];
-let _flatSigns = ['b', '@'];
-let _sharpSigns = ['#'];
-let PianoData = {
-    FlatSigns: _flatSigns,
-    NoteMap: _noteMap,
-    Notes: _notes,
-    SharpSigns: _sharpSigns
-};
-
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Style; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return StyleDynamics; });
-var Style;
-(function (Style) {
-    Style[Style["None"] = 0] = "None";
-    Style[Style["Legato"] = 1] = "Legato";
-    Style[Style["Staccato"] = 2] = "Staccato";
-    Style[Style["Pianissimo"] = 3] = "Pianissimo";
-    Style[Style["Piano"] = 4] = "Piano";
-    Style[Style["MezzoPiano"] = 5] = "MezzoPiano";
-    Style[Style["MezzoForte"] = 6] = "MezzoForte";
-    Style[Style["Forte"] = 7] = "Forte";
-    Style[Style["Fortissimo"] = 8] = "Fortissimo";
-})(Style || (Style = {}));
-;
-let StyleDynamics = {
-    [Style.Pianissimo]: 0.01,
-    [Style.Piano]: 0.05,
-    [Style.MezzoPiano]: 0.2,
-    [Style.MezzoForte]: 0.4,
-    [Style.Forte]: 0.6,
-    [Style.Fortissimo]: 1.0
-};
-
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Synth; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style__ = __webpack_require__(4);
 // This file contains code for generating the piano synth.
 // All variables are pluggable so that a user-configured synth
 //  can be used seamlessly, and arbitrary notes can be played with
@@ -226,12 +154,234 @@ let Synth = {
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Base; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__improviser__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__notes__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__player__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__scheduler__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__song__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__synth__ = __webpack_require__(0);
+// This file contains the external interface for blackswan.js
+
+
+
+
+
+
+
+let Base = (function (window) {
+    /* song initializer and instance members */
+    function createSong(title) {
+        let metadata = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__song__["a" /* DefaultSongData */])();
+        metadata.Title = title;
+        let song = {
+            at: getActions,
+            play: __WEBPACK_IMPORTED_MODULE_3__player__["a" /* Player */].play,
+            setTimeSignature: setTimeSignature,
+            setTempo: setTempo,
+            _master: [],
+            _metadata: metadata,
+        };
+        return song;
+    }
+    function getActions(measure) {
+        return __WEBPACK_IMPORTED_MODULE_4__scheduler__["a" /* Scheduler */].GetActions(this, measure);
+    }
+    function setTimeSignature(numerator, denominator) {
+        let timeSignature = {
+            beatsPerMeasure: numerator,
+            noteValue: denominator
+        };
+        this._metadata.TimeSignature = timeSignature;
+    }
+    function setTempo(tempo) {
+        this._metadata.Tempo = tempo;
+    }
+    /* muzak static functions */
+    function chord(notes, duration, ...config) {
+        return {
+            Notes: notes.map((n) => __WEBPACK_IMPORTED_MODULE_6__synth__["a" /* Synth */].SynthesizeNote(__WEBPACK_IMPORTED_MODULE_2__notes__["a" /* Notes */].getFrequency(n), config)),
+            Duration: duration,
+        };
+    }
+    function note(noteName, duration, ...config) {
+        let note = __WEBPACK_IMPORTED_MODULE_6__synth__["a" /* Synth */].SynthesizeNote(__WEBPACK_IMPORTED_MODULE_2__notes__["a" /* Notes */].getFrequency(noteName), config);
+        return {
+            Duration: duration,
+            Note: note
+        };
+    }
+    function rest(duration) {
+        return {
+            Duration: duration
+        };
+    }
+    function scale(playables, config) {
+        return {
+            Config: config || {
+                durations: [1],
+                style: []
+            },
+            Playables: playables
+        };
+    }
+    function sequence(sequence) {
+        return sequence;
+    }
+    let settings = {
+        setGain: __WEBPACK_IMPORTED_MODULE_6__synth__["a" /* Synth */].SetGain,
+        setImproviser: __WEBPACK_IMPORTED_MODULE_1__improviser__["a" /* Improviser */].setImproviser,
+        setOscillator: __WEBPACK_IMPORTED_MODULE_6__synth__["a" /* Synth */].SetOscillator,
+        setPlayer: __WEBPACK_IMPORTED_MODULE_6__synth__["a" /* Synth */].SetPlayer
+    };
+    let Base = {
+        as: __WEBPACK_IMPORTED_MODULE_0__style__["a" /* Style */],
+        chord,
+        note,
+        rest,
+        scale,
+        sequence,
+        settings,
+        song: createSong,
+    };
+    // Create the blackswan global, for people choosing to use it that way
+    window.blackswan = Base;
+    return Base;
+})(window);
+
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Improviser; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(1);
+
+function getRandomElement(elements) {
+    // maximum is exclusive here, so highest number returned will be
+    //  (notes.length - 1)
+    let max = elements.length;
+    let index = Math.floor(Math.random() * max);
+    return elements[index];
+}
+let _improviser = function getImprovisedSequence(scale, duration) {
+    let cursor = 0;
+    let nextDuration = getRandomElement(scale.Config.durations);
+    let sequence = [];
+    while (cursor + nextDuration < duration) {
+        let nextPlay = getRandomElement(scale.Playables);
+        if (Array.isArray(nextPlay)) {
+            let nextChord = __WEBPACK_IMPORTED_MODULE_0__base__["a" /* blackswan */].chord(nextPlay, nextDuration, ...scale.Config.style);
+            sequence.push(nextChord);
+        }
+        else {
+            let nextNote = __WEBPACK_IMPORTED_MODULE_0__base__["a" /* blackswan */].note(nextPlay, nextDuration, ...scale.Config.style);
+            sequence.push(nextNote);
+        }
+        cursor += nextDuration;
+        nextDuration = getRandomElement(scale.Config.durations);
+    }
+    return sequence;
+};
+function improvise(scale, duration) {
+    return _improviser(scale, duration);
+}
+function setImproviser(improviser) {
+    _improviser = improviser;
+}
+let Improviser = {
+    improvise,
+    setImproviser
+};
+
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PianoData; });
+// Only sharps are noted here; flats can be converted on-the-fly
+let _noteMap = {
+    'a0': 27.5, 'a#0': 29.1353, 'b0': 30.8677, 'c1': 32.7032, 'c#1': 34.6478,
+    'd1': 36.7081, 'd#1': 38.8909, 'e1': 41.2034, 'f1': 43.6535, 'f#1': 46.2493,
+    'g1': 48.9994, 'g#1': 51.9131, 'a1': 55.0, 'a#1': 58.2705, 'b1': 61.7354,
+    'c2': 65.4064, 'c#2': 69.2957, 'd2': 73.4162, 'd#2': 77.7817, 'e2': 82.4069,
+    'f2': 87.3071, 'f#2': 92.4986, 'g2': 97.9989, 'g#2': 103.826, 'a2': 110.0,
+    'a#2': 116.541, 'b2': 123.471, 'c3': 130.813, 'c#3': 138.591, 'd3': 146.832,
+    'd#3': 155.563, 'e3': 164.814, 'f3': 174.614, 'f#3': 184.997, 'g3': 195.998,
+    'g#3': 207.562, 'a3': 220.0, 'a#3': 233.082, 'b3': 246.942, 'c4': 261.626,
+    'c#4': 277.183, 'd4': 293.665, 'd#4': 311.127, 'e4': 329.628, 'f4': 349.228,
+    'f#4': 369.994, 'g4': 391.995, 'g#4': 415.305, 'a4': 440.0, 'a#4': 466.164,
+    'b4': 493.883, 'c5': 523.251, 'c#5': 554.365, 'd5': 587.330, 'd#5': 622.254,
+    'e5': 659.255, 'f5': 698.456, 'f#5': 739.989, 'g5': 783.991, 'g#5': 830.609,
+    'a5': 880.0, 'a#5': 932.328, 'b5': 987.767, 'c6': 1046.5, 'c#6': 1108.73,
+    'd6': 1174.66, 'd#6': 1244.51, 'e6': 1318.51, 'f6': 1396.91, 'f#6': 1479.98,
+    'g6': 1567.98, 'g#6': 1661.22, 'a6': 1760.0, 'a#6': 1864.66, 'b6': 1975.53,
+    'c7': 2093.00, 'c#7': 2217.46, 'd7': 2349.32, 'd#7': 2489.02, 'e7': 2637.02,
+    'f7': 2793.83, 'f#7': 2959.96, 'g7': 3135.96, 'g#7': 3322.44, 'a7': 3520.0,
+    'a#7': 3729.31, 'b7': 3951.07, 'c8': 4186.01
+};
+let _notes = [
+    'a', 'b', 'c', 'd', 'e', 'f', 'g'
+];
+let _flatSigns = ['b', '@'];
+let _sharpSigns = ['#'];
+let PianoData = {
+    FlatSigns: _flatSigns,
+    NoteMap: _noteMap,
+    Notes: _notes,
+    SharpSigns: _sharpSigns
+};
+
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Style; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return StyleDynamics; });
+var Style;
+(function (Style) {
+    Style[Style["None"] = 0] = "None";
+    Style[Style["Legato"] = 1] = "Legato";
+    Style[Style["Staccato"] = 2] = "Staccato";
+    Style[Style["Pianissimo"] = 3] = "Pianissimo";
+    Style[Style["Piano"] = 4] = "Piano";
+    Style[Style["MezzoPiano"] = 5] = "MezzoPiano";
+    Style[Style["MezzoForte"] = 6] = "MezzoForte";
+    Style[Style["Forte"] = 7] = "Forte";
+    Style[Style["Fortissimo"] = 8] = "Fortissimo";
+})(Style || (Style = {}));
+;
+let StyleDynamics = {
+    [Style.Pianissimo]: 0.01,
+    [Style.Piano]: 0.05,
+    [Style.MezzoPiano]: 0.2,
+    [Style.MezzoForte]: 0.4,
+    [Style.Forte]: 0.6,
+    [Style.Fortissimo]: 1.0
+};
+
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Validate; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__piano_data__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__piano_data__ = __webpack_require__(3);
 
 function isTimedChord(value) {
     return value.Notes !== undefined;
@@ -269,119 +419,352 @@ let Validate = {
 
 
 /***/ }),
-/* 4 */,
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__ = __webpack_require__(13);
-
-__WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__["a" /* mysong */].play();
-
-
-/***/ }),
 /* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Base; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__notes__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__player__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__scheduler__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__song__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__synth__ = __webpack_require__(2);
-// This file contains the external interface for blackswan.js
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return wrapper; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__ = __webpack_require__(19);
 
-
-
-
-
-
-let Base = (function (window) {
-    /* song initializer and instance members */
-    function createSong(title) {
-        let metadata = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__song__["a" /* DefaultSongData */])();
-        metadata.Title = title;
-        let song = {
-            at: getActions,
-            play: __WEBPACK_IMPORTED_MODULE_2__player__["a" /* Player */].play,
-            setTimeSignature: setTimeSignature,
-            setTempo: setTempo,
-            _master: [],
-            _metadata: metadata,
-        };
-        return song;
-    }
-    function getActions(measure) {
-        return __WEBPACK_IMPORTED_MODULE_3__scheduler__["a" /* Scheduler */].GetActions(this, measure);
-    }
-    function setTimeSignature(numerator, denominator) {
-        let timeSignature = {
-            beatsPerMeasure: numerator,
-            noteValue: denominator
-        };
-        this._metadata.TimeSignature = timeSignature;
-    }
-    function setTempo(tempo) {
-        this._metadata.Tempo = tempo;
-    }
-    /* muzak static functions */
-    function chord(notes, duration, ...config) {
-        return {
-            Notes: notes.map((n) => __WEBPACK_IMPORTED_MODULE_5__synth__["a" /* Synth */].SynthesizeNote(__WEBPACK_IMPORTED_MODULE_1__notes__["a" /* Notes */].getFrequency(n), config)),
-            Duration: duration,
-        };
-    }
-    function note(noteName, duration, ...config) {
-        let note = __WEBPACK_IMPORTED_MODULE_5__synth__["a" /* Synth */].SynthesizeNote(__WEBPACK_IMPORTED_MODULE_1__notes__["a" /* Notes */].getFrequency(noteName), config);
-        return {
-            Duration: duration,
-            Note: note
-        };
-    }
-    function rest(duration) {
-        return {
-            Duration: duration
-        };
-    }
-    function scale(playables, config) {
-        return {
-            Config: config || {
-                durations: [1],
-                style: []
-            },
-            Playables: playables
-        };
-    }
-    function sequence(sequence) {
-        return sequence;
-    }
-    let Base = {
-        as: __WEBPACK_IMPORTED_MODULE_0__style__["a" /* Style */],
-        chord,
-        note,
-        rest,
-        scale,
-        sequence,
-        song: createSong,
-    };
-    // Create the blackswan global, for people choosing to use it that way
-    window.blackswan = Base;
-    return Base;
-})(window);
+// Play La Cucaracha continuously, on a loop
+function recurse() {
+    __WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__["a" /* mysong */].at(4).callback(recurse);
+    __WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__["a" /* mysong */].play();
+}
+;
+let wrapper = {
+    play: recurse
+};
 
 
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports) {
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__call_back_recursively__ = __webpack_require__(6);
+
+__WEBPACK_IMPORTED_MODULE_0__call_back_recursively__["a" /* mysong */].play();
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Notes; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__piano_data__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__validate__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__piano_data__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__validate__ = __webpack_require__(5);
 
 
 function createNote(noteName, frequency, overrideExisting = false) {
@@ -474,23 +857,20 @@ let Notes = {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Player; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__synth__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__synth__ = __webpack_require__(0);
 
-let _lastPaused = 0;
-function pause() {
-    _lastPaused = __WEBPACK_IMPORTED_MODULE_0__synth__["a" /* Synth */].Context.currentTime;
-    // Synth.Context.close();
-}
-function play() {
-    _lastPaused = 0;
+function play(when) {
+    if (when === undefined) {
+        when = __WEBPACK_IMPORTED_MODULE_0__synth__["a" /* Synth */].Context.currentTime;
+    }
     for (let track of this._master) {
         for (let note of track.Notes) {
-            playAt(note, track.WhenSeconds, track.DurationSeconds);
+            playAt(note, track.WhenSeconds + when, track.DurationSeconds);
         }
     }
 }
@@ -509,13 +889,16 @@ let Player = {
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Scheduler; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__improviser__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__validate__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__improviser__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__synth__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__validate__ = __webpack_require__(5);
+const WebAudioScheduler = __webpack_require__(13);
+
 
 
 function improvises(context, improvisable, duration) {
@@ -559,7 +942,7 @@ function measuresToSeconds(measures, song) {
 }
 function getTracks(context, playable) {
     let WhenSeconds = measuresToSeconds(context.Measure, context.Song);
-    if (__WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].isTimedNote(playable)) {
+    if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedNote(playable)) {
         let track = {
             Notes: [playable.Note],
             DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
@@ -567,7 +950,7 @@ function getTracks(context, playable) {
         };
         return [track];
     }
-    else if (__WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].isTimedChord(playable)) {
+    else if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedChord(playable)) {
         let track = {
             Notes: playable.Notes,
             DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
@@ -580,10 +963,10 @@ function getTracks(context, playable) {
             if (index > 0) {
                 context.Measure += beatsToMeasures(playable[index - 1].Duration, context.Song);
             }
-            if (__WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].isTimedNote(item)) {
+            if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedNote(item)) {
                 return getTracks(context, item);
             }
-            else if (__WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].isTimedChord(item)) {
+            else if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedChord(item)) {
                 return getTracks(context, item);
             }
             else {
@@ -598,11 +981,18 @@ function getTracks(context, playable) {
     }
 }
 function getActions(song, measure) {
+    let context = __WEBPACK_IMPORTED_MODULE_1__synth__["a" /* Synth */].Context;
+    let scheduler = new WebAudioScheduler({ context });
+    scheduler.start();
     let actionContext = {
         Measure: measure,
         Song: song
     };
     let actions = {
+        callback: function (callback) {
+            let whenSeconds = measuresToSeconds(measure, song);
+            scheduler.insert(whenSeconds + context.currentTime, callback);
+        },
         improvises: function (improvisable, duration) {
             return improvises(actionContext, improvisable, duration);
         },
@@ -622,7 +1012,7 @@ let Scheduler = {
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -645,60 +1035,265 @@ function DefaultSongData() {
 
 
 /***/ }),
-/* 11 */,
-/* 12 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Improviser; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__base__ = __webpack_require__(6);
-
-function getRandomElement(elements) {
-    // maximum is exclusive here, so highest number returned will be
-    //  (notes.length - 1)
-    let max = elements.length;
-    let index = Math.floor(Math.random() * max);
-    return elements[index];
-}
-let _improviser = function getImprovisedSequence(scale, duration) {
-    let cursor = 0;
-    let nextDuration = getRandomElement(scale.Config.durations);
-    let sequence = [];
-    while (cursor + nextDuration < duration) {
-        let nextPlay = getRandomElement(scale.Playables);
-        if (Array.isArray(nextPlay)) {
-            let nextChord = __WEBPACK_IMPORTED_MODULE_0__base__["a" /* blackswan */].chord(nextPlay, nextDuration, ...scale.Config.style);
-            sequence.push(nextChord);
-        }
-        else {
-            let nextNote = __WEBPACK_IMPORTED_MODULE_0__base__["a" /* blackswan */].note(nextPlay, nextDuration, ...scale.Config.style);
-            sequence.push(nextNote);
-        }
-        cursor += nextDuration;
-        nextDuration = getRandomElement(scale.Config.durations);
-    }
-    return sequence;
-};
-function improvise(scale, duration) {
-    return _improviser(scale, duration);
-}
-function setImproviser(improviser) {
-    _improviser = improviser;
-}
-let Improviser = {
-    improvise,
-    setImproviser
-};
-
+module.exports = __webpack_require__(16);
 
 
 /***/ }),
-/* 13 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var events = __webpack_require__(7);
+var defaults = __webpack_require__(17);
+var defaultContext = __webpack_require__(15);
+
+var WebAudioScheduler = function (_events$EventEmitter) {
+  _inherits(WebAudioScheduler, _events$EventEmitter);
+
+  function WebAudioScheduler(opts) {
+    _classCallCheck(this, WebAudioScheduler);
+
+    opts = opts || /* istanbul ignore next */{};
+
+    var _this = _possibleConstructorReturn(this, (WebAudioScheduler.__proto__ || Object.getPrototypeOf(WebAudioScheduler)).call(this));
+
+    _this.context = defaults(opts.context, defaultContext);
+    _this.interval = defaults(opts.interval, 0.025);
+    _this.aheadTime = defaults(opts.aheadTime, 0.1);
+    _this.timerAPI = defaults(opts.timerAPI, global);
+    _this.playbackTime = _this.currentTime;
+
+    _this._timerId = 0;
+    _this._schedId = 0;
+    _this._scheds = [];
+    return _this;
+  }
+
+  _createClass(WebAudioScheduler, [{
+    key: "start",
+    value: function start(callback, args) {
+      var loop = this.process.bind(this);
+
+      if (this._timerId === 0) {
+        this._timerId = this.timerAPI.setInterval(loop, this.interval * 1000);
+
+        this.emit("start");
+
+        if (callback) {
+          this.insert(this.context.currentTime, callback, args);
+          loop();
+        }
+      } else if (callback) {
+        this.insert(this.context.currentTime, callback, args);
+      }
+
+      return this;
+    }
+  }, {
+    key: "stop",
+    value: function stop() {
+      var reset = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      if (this._timerId !== 0) {
+        this.timerAPI.clearInterval(this._timerId);
+        this._timerId = 0;
+
+        this.emit("stop");
+      }
+
+      if (reset) {
+        this._scheds.splice(0);
+      }
+
+      return this;
+    }
+  }, {
+    key: "insert",
+    value: function insert(time, callback, args) {
+      var id = ++this._schedId;
+      var event = { id: id, time: time, callback: callback, args: args };
+      var scheds = this._scheds;
+
+      if (scheds.length === 0 || scheds[scheds.length - 1].time <= time) {
+        scheds.push(event);
+      } else {
+        for (var i = 0, imax = scheds.length; i < imax; i++) {
+          if (time < scheds[i].time) {
+            scheds.splice(i, 0, event);
+            break;
+          }
+        }
+      }
+
+      return id;
+    }
+  }, {
+    key: "nextTick",
+    value: function nextTick(time, callback, args) {
+      if (typeof time === "function") {
+        args = callback;
+        callback = time;
+        time = this.playbackTime;
+      }
+
+      return this.insert(time + this.aheadTime, callback, args);
+    }
+  }, {
+    key: "remove",
+    value: function remove(schedId) {
+      var scheds = this._scheds;
+
+      if (typeof schedId === "number") {
+        for (var i = 0, imax = scheds.length; i < imax; i++) {
+          if (schedId === scheds[i].id) {
+            scheds.splice(i, 1);
+            break;
+          }
+        }
+      }
+
+      return schedId;
+    }
+  }, {
+    key: "removeAll",
+    value: function removeAll() {
+      this._scheds.splice(0);
+    }
+  }, {
+    key: "process",
+    value: function process() {
+      var t0 = this.context.currentTime;
+      var t1 = t0 + this.aheadTime;
+
+      this._process(t0, t1);
+    }
+  }, {
+    key: "_process",
+    value: function _process(t0, t1) {
+      var scheds = this._scheds;
+      var playbackTime = t0;
+
+      this.playbackTime = playbackTime;
+      this.emit("process", { playbackTime: playbackTime });
+
+      while (scheds.length && scheds[0].time < t1) {
+        var event = scheds.shift();
+        var _playbackTime = event.time;
+        var args = event.args;
+
+        this.playbackTime = _playbackTime;
+
+        event.callback({ playbackTime: _playbackTime, args: args });
+      }
+
+      this.playbackTime = playbackTime;
+      this.emit("processed", { playbackTime: playbackTime });
+    }
+  }, {
+    key: "state",
+    get: function get() {
+      return this._timerId !== 0 ? "running" : "suspended";
+    }
+  }, {
+    key: "currentTime",
+    get: function get() {
+      return this.context.currentTime;
+    }
+  }, {
+    key: "events",
+    get: function get() {
+      return this._scheds.slice();
+    }
+  }]);
+
+  return WebAudioScheduler;
+}(events.EventEmitter);
+
+module.exports = WebAudioScheduler;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)))
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+  get currentTime() {
+    return Date.now() / 1000;
+  }
+};
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(14);
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function defaults(value, defaultValue) {
+  return value !== undefined ? value : defaultValue;
+}
+
+module.exports = defaults;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(1);
 
 let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('La Cucaracha');
 // Kick up the tempo, arriba!

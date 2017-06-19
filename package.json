@@ -8,9 +8,12 @@
   },
   "dependencies": {
     "ts-loader": "^2.1.0",
+    "web-audio-scheduler": "^1.4.0",
     "webpack": "^2.6.1"
   },
   "devDependencies": {
+    "@types/node": "^7.0.31",
+    "require": "^2.4.20",
     "ts-loader": "^2.1.0",
     "typescript": "^2.3.4",
     "webpack": "^2.6.1"

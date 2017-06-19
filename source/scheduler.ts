@@ -1,26 +1,29 @@
+const WebAudioScheduler = require('web-audio-scheduler');
+
 import { Improviser, Scale } from './improviser';
 import { Song } from './song';
-import { Note } from './synth';
+import { Note, Synth } from './synth';
 import { Validate } from './validate';
 
 export interface ActionContext {
-  Measure: number,
-  Song: Song
+  Measure: number;
+  Song: Song;
 }
 
 export interface Actions {
-  improvises: (improvisable: Scale, duration: number) => void,
-  plays: (playable: TimedNote|TimedChord|Sequence) => void,
-  repeats: (repeatable: TimedNote|TimedChord, config: RepeatConfig) => void,
+  callback: (callback: Function) => void;
+  improvises: (improvisable: Scale, duration: number) => void;
+  plays: (playable: TimedNote|TimedChord|Sequence) => void;
+  repeats: (repeatable: TimedNote|TimedChord, config: RepeatConfig) => void;
 }
 
 export interface Moment {
-  Duration: number
+  Duration: number;
 }
 
 export interface RepeatConfig {
-  every: number,
-  times: number,
+  every: number;
+  times: number;
 }
 
 export interface Rest extends Moment { }
@@ -28,17 +31,17 @@ export interface Rest extends Moment { }
 export interface Sequence extends Array<TimedNote|TimedChord|Rest> { }
 
 export interface TimedChord extends Moment {
-  Notes: Note[]
+  Notes: Note[];
 }
 
 export interface TimedNote extends Moment {
-  Note: Note,
+  Note: Note;
 }
 
 export interface Track {
-  Notes: Note[],
-  WhenSeconds: number, // in seconds
-  DurationSeconds: number, // also in seconds
+  Notes: Note[];
+  WhenSeconds: number; // in seconds
+  DurationSeconds: number; // also in seconds
 }
 
 function improvises(context: ActionContext, improvisable: Scale, duration: number): void {
@@ -131,12 +134,20 @@ function getTracks(context: ActionContext, playable: TimedNote|TimedChord|Sequen
 }
 
 function getActions(song: Song, measure: number): Actions {
+  let context = Synth.Context;
+  let scheduler = new WebAudioScheduler({ context });
+  scheduler.start();
+
   let actionContext: ActionContext = {
     Measure: measure,
     Song: song
   };
 
   let actions: Actions = {
+    callback: function(callback: Function) {
+      let whenSeconds = measuresToSeconds(measure, song);
+      scheduler.insert(whenSeconds + context.currentTime, callback);
+    },
     improvises: function(improvisable: Scale, duration: number) {
       return improvises(actionContext, improvisable, duration);
     },

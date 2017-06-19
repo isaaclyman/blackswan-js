@@ -48,7 +48,7 @@ function improvise(scale: Scale, duration: number): Sequence {
   return _improviser(scale, duration);
 }
 
-function setImproviser(improviser: (scale: Scale, duration: number) => Sequence) {
+function setImproviser(improviser: (scale: Scale, duration: number) => Sequence): void {
   _improviser = improviser;
 }
 

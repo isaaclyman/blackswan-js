@@ -1,19 +1,14 @@
 import { Song } from './song';
 import { Note, Synth } from './synth';
 
-let _lastPaused = 0;
-
-function pause(this: Song) {
-  _lastPaused = Synth.Context.currentTime;
-  // Synth.Context.close();
-}
-
-function play(this: Song) {
-  _lastPaused = 0;
+function play(this: Song, when?: number) {
+  if (when === undefined) {
+    when = Synth.Context.currentTime;
+  }
 
   for (let track of this._master) {
     for (let note of track.Notes) {
-      playAt(note, track.WhenSeconds, track.DurationSeconds);
+      playAt(note, track.WhenSeconds + when, track.DurationSeconds);
     }
   }
 }
