@@ -7,19 +7,21 @@ import { Style, StyleDynamics } from './style';
 
 export interface Note {
   Frequency: number;
-  GetNoteNodes: (this: Note) => NoteNodes;
+  GetNodeChain: (this: Note) => NodeChain;
   Play: (this: Note, startSeconds: number, stopSeconds: number) => void;
   Style: Style[];
 }
 
-export interface NoteNodes {
+interface NodeChain {
   Gain: GainNode;
   Oscillator: OscillatorNode;
 }
 
 let _context = new AudioContext();
+let masterGain = _context.createGain();
+masterGain.connect(_context.destination);
 
-function defaultGain(style: Style[]): GainNode {
+function defaultGain(frequency: number, style: Style[]): GainNode {
   let gainNode = _context.createGain();
 
   let hasDynamics = style.some((st) => {
@@ -35,25 +37,47 @@ function defaultGain(style: Style[]): GainNode {
     gainNode.gain.value = 0.5;
   }
 
+  let frequencyModifier = ((frequency - 440) / 37600);
+
+  gainNode.gain.value -= frequencyModifier;
+
   return gainNode;
 }
 
-function defaultOscillator(frequency: number): OscillatorNode {
+function defaultOscillator(frequency: number, style: Style[], gainNode: GainNode): OscillatorNode {
   let oscillator = _context.createOscillator();
   oscillator.frequency.value = frequency;
   oscillator.type = 'sine';
+
+  oscillator.connect(gainNode);
+
   return oscillator;
 }
 
 function defaultPlayer(note: Note, startSeconds: number, stopSeconds: number): void {
-  let nodes = note.GetNoteNodes();
+  let nodes = note.GetNodeChain();
 
-  nodes.Gain.gain.setTargetAtTime(nodes.Gain.gain.value, startSeconds, 0.02);
+  let noteDuration = stopSeconds - startSeconds,
+      noteFadePct = 0.04,
+      noteStopTime = stopSeconds;
+
+  if (!!~note.Style.indexOf(Style.Legato)) {
+    noteFadePct = 0.01;
+    noteStopTime = stopSeconds;
+  } else if (!!~note.Style.indexOf(Style.Staccato)) {
+    noteFadePct = 0.01;
+    noteStopTime = startSeconds + 0.15;
+  }
+
+  let noteFadeTime = noteFadePct * noteDuration;
+
+  let maxGain = nodes.Gain.gain.value;
   nodes.Gain.gain.value = 0;
-  nodes.Gain.gain.setTargetAtTime(0, stopSeconds - 0.04, 0.02);
+  nodes.Gain.gain.setTargetAtTime(maxGain, startSeconds, noteFadeTime);
+  nodes.Gain.gain.setTargetAtTime(0, noteStopTime - (noteFadeTime * 4), noteFadeTime);
 
   nodes.Oscillator.start(startSeconds);
-  nodes.Oscillator.stop(stopSeconds + 0.04);
+  nodes.Oscillator.stop(noteStopTime);
 }
 
 let _gain = defaultGain;
@@ -63,20 +87,18 @@ let _player = defaultPlayer;
 function synthesizeNote(frequency: number, style: Style[]): Note {
   let note: Note = {
     Frequency: frequency,
-    GetNoteNodes: function(this: Note): NoteNodes {
-      let gain = _gain(style);
-      gain.connect(_context.destination);
-      // No need to disconnect a previous oscillator, since the browser
-      //  disposes them once Node.stop() is called.
-      let oscillator = _oscillator(frequency);
-      oscillator.connect(gain);
+    GetNodeChain: function(this: Note): NodeChain {
+      let gain = _gain(frequency, style);
+      gain.connect(masterGain);
 
-      let nodes: NoteNodes = {
+      let oscillator = _oscillator(frequency, style, gain);
+
+      let nodeChain: NodeChain = {
         Gain: gain,
         Oscillator: oscillator
       };
 
-      return nodes;
+      return nodeChain;
     },
     Play: function(this: Note, startSeconds: number, stopSeconds: number): void {
       _player(this, startSeconds, stopSeconds);
@@ -87,11 +109,11 @@ function synthesizeNote(frequency: number, style: Style[]): Note {
   return note;
 }
 
-function setGain(gain: (style: Style[]) => GainNode): void {
+function setGain(gain: (frequency: number, style: Style[]) => GainNode): void {
   _gain = gain;
 }
 
-function setOscillator(oscillator: (frequency: number) => OscillatorNode): void {
+function setOscillator(oscillator: (frequency: number, style: Style[], gainNode: GainNode) => OscillatorNode): void {
   _oscillator = oscillator;
 }
 

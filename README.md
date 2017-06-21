@@ -41,9 +41,9 @@ var lowerRiff = blackswan.sequence([
   blackswan.rest(3),
   // blackswan.note: pass in the note name (as before), a duration (number
   //  of beats) and optional configuration parameters
-  blackswan.note('c3', 0.75, blackswan.as.staccato),
-  blackswan.note('e3', 0.25, blackswan.as.staccato),
-  blackswan.note('c3', 1, blackswan.as.staccato)
+  blackswan.note('c3', 0.75, blackswan.as.Staccato),
+  blackswan.note('e3', 0.25, blackswan.as.Staccato),
+  blackswan.note('c3', 1, blackswan.as.Staccato)
 ]);
 
 // Defining a set of notes to use for later improvisation
@@ -61,7 +61,7 @@ var lowerScale = blackswan.scale([
   durations: [0.25, 0.25, 0.5, 1],
   // style: an array of blackswan.as configuration parameters
   // Default is [].
-  style: [blackswan.as.staccato]
+  style: [blackswan.as.Staccato]
 });
 
 // blackswan.song.at: pass in the measure to start from
@@ -70,7 +70,7 @@ song.at(0)
 //  object
 // "every": how many beats to pause between repeats
 // "times": how many times to repeat
-  .repeats(cMajorChord(1, blackswan.as.staccato), { every: 1, times: 21 });
+  .repeats(cMajorChord(1, blackswan.as.Staccato), { every: 1, times: 21 });
 
 // blackswan.song.at.plays: pass in a note, chord, or riff
 song.at(1)
@@ -88,20 +88,28 @@ song.play();
 ## Advanced features
 
 ```javascript
-// Assume a song has already been created:
-// let song = ...
-
 // You can sub in your own functions for creating gain nodes and oscillator nodes,
 //  playing a note, and improvising:
 
-blackswan.settings.setGain(function (styles) {
-  // `styles` is an array of blackswan.as style values.
+blackswan.settings.setGain(function (frequency, style) {
+  // `style` is an array of blackswan.as style values.
   // Return a GainNode.
+  // The GainNode you create here will be the final GainNode that each note passes
+  //  through before reaching the master GainNode, which is connected to
+  //  AudioContext.destination.
 });
 
-blackswan.settings.setOscillator(function (frequency) {
+blackswan.settings.setOscillator(function (frequency, style, gainNode) {
   // `frequency` is a number in hertz.
+  // `style` is an array of blackswan.as style values.
+  // `gainNode` is a GainNode connected to the master GainNode.
+  //   E.g.: gainNode -> masterGain -> AudioContext.destination
   // Return an OscillatorNode.
+  // You can chain nodes as desired, but you *must* connect the final node
+  //  to gainNode.
+  //  E.g.: OscillatorNode -> GainNode -> ConvolverNode > DelayNode -> gainNode
+  // The start() and stop() methods of the OscillatorNode will be used to
+  //  schedule the note.
 });
 
 blackswan.settings.setPlayer(function (note, startSeconds, stopSeconds) {
@@ -109,7 +117,8 @@ blackswan.settings.setPlayer(function (note, startSeconds, stopSeconds) {
   //   Frequency: a number in hertz
   //   GetNoteNodes: a function that has no arguments and returns an object with
   //    the following properties:
-  //      Gain: a GainNode
+  //      Gain: the final GainNode that a note will pass through before reaching
+  //       the master GainNode, which is connected to AudioContext.destination.
   //      Oscillator: an OscillatorNode that has not had ".stop()" called on it
   //   Play: a function that accepts a note, startSeconds and stopSeconds and
   //    plays a note. (Yes, this is the function we're building right now.)
@@ -132,6 +141,8 @@ blackswan.settings.setImproviser(function (scale, duration) {
   //  blackswan.rest(...)
 });
 
+let song = blackswan.song('Advanced Features');
+
 // blackswan.song.at.callback: execute a function when the given measure is reached
 song.at(4.5).callback(function(song) {
   // Display a message, progress an animation, whatever you want here.
@@ -143,6 +154,22 @@ song.at(4.5).callback(function(song) {
   });
 });
 
+```
+
+## Styles
+
+`blackswan.as` currently has the following style values:
+
+```javascript
+None,
+Legato,
+Staccato,
+Pianissimo,
+Piano,
+MezzoPiano,
+MezzoForte,
+Forte,
+Fortissimo
 ```
 
 ## Acknowledgements

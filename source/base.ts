@@ -8,9 +8,9 @@ import { DefaultSongData, Song, TimeSignature } from './song';
 import { Note, Synth } from './synth';
 
 export interface Settings {
-  setGain: (gain: (style: Style[]) => GainNode) => void;
+  setGain: (gain: (frequency: number, style: Style[]) => GainNode) => void;
   setImproviser: (improviser: (scale: Scale, duration: number) => Sequence) => void;
-  setOscillator: (oscillator: (frequency: number) => OscillatorNode) => void;
+  setOscillator: (oscillator: (frequency: number, style: Style[], gainNode: GainNode) => OscillatorNode) => void;
   setPlayer: (player: (note: Note, startSeconds: number, stopSeconds: number) => void) => void;
 }
 

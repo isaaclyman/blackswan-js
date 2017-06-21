@@ -4,6 +4,8 @@ import { mysong as Chords } from './play-chords';
 import { mysong as Repeat } from './repeat';
 import { mysong as Improvise } from './improvise';
 import { mysong as Recurse } from './call-back-recursively';
+import { mysong as LegatoStaccato } from './play-legato-staccato';
+
 import { mysong as LaCucaracha } from './play-la-cucaracha';
 
-Recurse.play();
+LegatoStaccato.play();

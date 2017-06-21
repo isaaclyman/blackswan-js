@@ -79,7 +79,9 @@
 //  arbitrary articulation and dynamics.
 
 let _context = new AudioContext();
-function defaultGain(style) {
+let masterGain = _context.createGain();
+masterGain.connect(_context.destination);
+function defaultGain(frequency, style) {
     let gainNode = _context.createGain();
     let hasDynamics = style.some((st) => {
         let dynamics = __WEBPACK_IMPORTED_MODULE_0__style__["b" /* StyleDynamics */][st];
@@ -92,21 +94,35 @@ function defaultGain(style) {
     if (!hasDynamics) {
         gainNode.gain.value = 0.5;
     }
+    let frequencyModifier = ((frequency - 440) / 37600);
+    gainNode.gain.value -= frequencyModifier;
     return gainNode;
 }
-function defaultOscillator(frequency) {
+function defaultOscillator(frequency, style, gainNode) {
     let oscillator = _context.createOscillator();
     oscillator.frequency.value = frequency;
     oscillator.type = 'sine';
+    oscillator.connect(gainNode);
     return oscillator;
 }
 function defaultPlayer(note, startSeconds, stopSeconds) {
-    let nodes = note.GetNoteNodes();
-    nodes.Gain.gain.setTargetAtTime(nodes.Gain.gain.value, startSeconds, 0.02);
+    let nodes = note.GetNodeChain();
+    let noteDuration = stopSeconds - startSeconds, noteFadePct = 0.04, noteStopTime = stopSeconds;
+    if (!!~note.Style.indexOf(__WEBPACK_IMPORTED_MODULE_0__style__["a" /* Style */].Legato)) {
+        noteFadePct = 0.01;
+        noteStopTime = stopSeconds;
+    }
+    else if (!!~note.Style.indexOf(__WEBPACK_IMPORTED_MODULE_0__style__["a" /* Style */].Staccato)) {
+        noteFadePct = 0.01;
+        noteStopTime = startSeconds + 0.15;
+    }
+    let noteFadeTime = noteFadePct * noteDuration;
+    let maxGain = nodes.Gain.gain.value;
     nodes.Gain.gain.value = 0;
-    nodes.Gain.gain.setTargetAtTime(0, stopSeconds - 0.04, 0.02);
+    nodes.Gain.gain.setTargetAtTime(maxGain, startSeconds, noteFadeTime);
+    nodes.Gain.gain.setTargetAtTime(0, noteStopTime - (noteFadeTime * 4), noteFadeTime);
     nodes.Oscillator.start(startSeconds);
-    nodes.Oscillator.stop(stopSeconds + 0.04);
+    nodes.Oscillator.stop(noteStopTime);
 }
 let _gain = defaultGain;
 let _oscillator = defaultOscillator;
@@ -114,18 +130,15 @@ let _player = defaultPlayer;
 function synthesizeNote(frequency, style) {
     let note = {
         Frequency: frequency,
-        GetNoteNodes: function () {
-            let gain = _gain(style);
-            gain.connect(_context.destination);
-            // No need to disconnect a previous oscillator, since the browser
-            //  disposes them once Node.stop() is called.
-            let oscillator = _oscillator(frequency);
-            oscillator.connect(gain);
-            let nodes = {
+        GetNodeChain: function () {
+            let gain = _gain(frequency, style);
+            gain.connect(masterGain);
+            let oscillator = _oscillator(frequency, style, gain);
+            let nodeChain = {
                 Gain: gain,
                 Oscillator: oscillator
             };
-            return nodes;
+            return nodeChain;
         },
         Play: function (startSeconds, stopSeconds) {
             _player(this, startSeconds, stopSeconds);
@@ -423,18 +436,24 @@ let Validate = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return wrapper; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__ = __webpack_require__(19);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(1);
 
-// Play La Cucaracha continuously, on a loop
-function recurse() {
-    __WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__["a" /* mysong */].at(4).callback(recurse);
-    __WEBPACK_IMPORTED_MODULE_0__play_la_cucaracha__["a" /* mysong */].play();
-}
-;
-let wrapper = {
-    play: recurse
-};
+let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('legato and staccato');
+// Default tempo and time signature will be fine.
+// Play a few staccato notes
+let staccatoSeq = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].sequence([
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 1, __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].as.Staccato),
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('e4', 1, __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].as.Staccato),
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 1, __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].as.Staccato)
+]);
+// Play a couple of legato chords
+let legatoSeq = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].sequence([
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['c4', 'f4', 'g4'], 1, __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].as.Legato),
+    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].chord(['c4', 'e4', 'g4'], 1, __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].as.Legato)
+]);
+mysong.at(0).plays(staccatoSeq);
+mysong.at(0.75).plays(legatoSeq);
 
 
 
@@ -752,9 +771,9 @@ function isUndefined(arg) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__call_back_recursively__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_legato_staccato__ = __webpack_require__(6);
 
-__WEBPACK_IMPORTED_MODULE_0__call_back_recursively__["a" /* mysong */].play();
+__WEBPACK_IMPORTED_MODULE_0__play_legato_staccato__["a" /* mysong */].play();
 
 
 /***/ }),
@@ -1285,38 +1304,6 @@ try {
 // easier to handle this case. if(!global) { ...}
 
 module.exports = g;
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_base__ = __webpack_require__(1);
-
-let mysong = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].song('La Cucaracha');
-// Kick up the tempo, arriba!
-mysong.setTempo(200);
-let la = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 0.5);
-let cu = la;
-let ca = cu;
-let ra = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 1.5);
-let cha = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('a4', 1);
-let climb = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 1);
-let ing = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('f4', 0.5);
-let up = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('e4', 0.5);
-let and = up;
-let down = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('d4', 0.5);
-let the = down;
-let wall = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].note('c4', 1.5);
-let sequence = __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].sequence([
-    la, cu, ca, ra, cha, la, cu, ca, ra, cha,
-    __WEBPACK_IMPORTED_MODULE_0__source_base__["a" /* blackswan */].rest(1.5),
-    climb, ing, up, and, down, the, wall
-]);
-mysong.at(0).plays(sequence);
-
 
 
 /***/ })
