@@ -37,14 +37,33 @@ function defaultGain(frequency: number, style: Style[]): GainNode {
     gainNode.gain.value = 0.5;
   }
 
-  let frequencyModifier = ((frequency - 440) / 37600);
+  // Lower frequencies are too quiet and higher frequencies are too loud.
+  // To solve this, let's modify the gain based on the frequency.
 
-  gainNode.gain.value -= frequencyModifier;
+  // Frequency is exponential, i.e. frequency = note ** 2
+  // We'll square root everything to make it linear
+  let frequencyLinear = Math.sqrt(frequency);
+  let maxFrequencyLinear = Math.sqrt(4200);
+
+  // Then we take the percent of max frequency and place it in the range [-f + g, f + g]
+  //  where f + g is the maximum amount we want to increase gain
+  //  do magic to it if f > 1
+  //  then add that to the gain.
+  let frequencyScale = frequencyLinear / maxFrequencyLinear;
+  let frequencyFactor = 0.25;
+  let frequencyOffset = 0.08;
+  let frequencyModifier = (frequencyScale * -frequencyFactor) + (frequencyFactor / 2) + frequencyOffset;
+
+  if (frequencyModifier > 0) {
+    frequencyModifier = ((frequencyModifier + 1) ** 8) - 1;
+  }
+
+  gainNode.gain.value += frequencyModifier;
 
   return gainNode;
 }
 
-function defaultOscillator(frequency: number, style: Style[], gainNode: GainNode): OscillatorNode {
+function defaultOscillator(frequency: number, _style: Style[], gainNode: GainNode): OscillatorNode {
   let oscillator = _context.createOscillator();
   oscillator.frequency.value = frequency;
   oscillator.type = 'sine';
