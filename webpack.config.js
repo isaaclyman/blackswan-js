@@ -1,7 +1,13 @@
+const path = require('path');
+
 module.exports = {
-    entry: "./examples/example-player.js",
+    entry: {
+      "blackswan": "./source/base.ts",
+      "example": "./examples/example-player.js"
+    },
     output: {
-        filename: "bundle.js"
+        path: path.resolve(__dirname, 'dist'),
+        filename: "[name].js"
     },
     resolve: {
         // Add '.ts' and '.tsx' as a resolvable extension.

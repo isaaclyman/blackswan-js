@@ -1,7 +1,7 @@
 {
-  "name": "muzak-js",
-  "version": "0.0.1",
-  "description": "A library for expressive music creation with JavaScript",
+  "name": "blackswan-js",
+  "version": "0.0.8",
+  "description": "A library for expressive music composition with JavaScript",
   "main": "webpack.config.js",
   "directories": {
     "example": "examples"
