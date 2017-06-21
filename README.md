@@ -5,12 +5,10 @@
 blackswan.js is named after "Black Swan Song" by the British band Athlete. Its intended use is for writing songs. Any song written in blackswan.js can easily be played back in compatible browsers (up-to-date Chrome is a sure bet). It has a simple piano synth built in and is easy to use if you have basic JavaScript skills.
 
 ## Principles
-- Writing a song in blackswan.js should be more like writing sheet music than sound programming.
-- Structured improvisation should be baked in.
-- Later: action calls can be chained so that each action doesn't have to be manually lined up with a measure.
-- Later: tools should be provided for setting the musical key/scale in order to guide the composition process and improvisation.
-- Later: there should be configuration methods for setting up custom improvisation methods.
-- Later: there should be methods for plugging in new synths.
+- Writing a song in blackswan.js is more like writing sheet music than sound programming.
+- A decent almost-piano is baked in.
+- Structured improvisation is a first-class feature.
+- For power users, the synth and improviser are user-swappable with minimal headache.
 
 ## Basics
 
