@@ -112,3 +112,4 @@ let Base = (function (window) {
 })(window);
 
 export { Base as blackswan };
+export default Base;
