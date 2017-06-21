@@ -206,6 +206,7 @@ function DefaultSongData() {
 
 let _context = new AudioContext();
 let masterGain = _context.createGain();
+masterGain.gain.value = 0.4;
 masterGain.connect(_context.destination);
 function defaultGain(frequency, style) {
     let gainNode = _context.createGain();
@@ -629,7 +630,7 @@ mysong.at(0).plays(sequence);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export mysong */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
 
@@ -771,7 +772,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-__WEBPACK_IMPORTED_MODULE_8__play_la_cucaracha__["a" /* mysong */].play();
+__WEBPACK_IMPORTED_MODULE_7__play_glissandos__["a" /* mysong */].play();
 
 
 /***/ }),

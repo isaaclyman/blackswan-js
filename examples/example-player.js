@@ -9,4 +9,4 @@ import { mysong as Glissandos } from './play-glissandos';
 
 import { mysong as LaCucaracha } from './play-la-cucaracha';
 
-LaCucaracha.play();
+Glissandos.play();

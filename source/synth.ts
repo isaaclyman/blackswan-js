@@ -19,6 +19,7 @@ interface NodeChain {
 
 let _context = new AudioContext();
 let masterGain = _context.createGain();
+masterGain.gain.value = 0.4;
 masterGain.connect(_context.destination);
 
 function defaultGain(frequency: number, style: Style[]): GainNode {
