@@ -198,20 +198,25 @@ function DefaultSongData() {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Synth; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__style__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__brickwall_limiter_lib__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__style__ = __webpack_require__(6);
 // This file contains code for generating the piano synth.
 // All variables are pluggable so that a user-configured synth
 //  can be used seamlessly, and arbitrary notes can be played with
 //  arbitrary articulation and dynamics.
 
+
 let _context = new AudioContext();
 let masterGain = _context.createGain();
 masterGain.gain.value = 0.4;
-masterGain.connect(_context.destination);
-function defaultGain(frequency, style) {
+let brickwallLimiter = _context.createScriptProcessor(4096, 1, 1);
+brickwallLimiter.onaudioprocess = __WEBPACK_IMPORTED_MODULE_0__brickwall_limiter_lib__["a" /* default */];
+brickwallLimiter.connect(_context.destination);
+masterGain.connect(brickwallLimiter);
+function defaultGain(frequency, style, masterGain) {
     let gainNode = _context.createGain();
     let hasDynamics = style.some((st) => {
-        let dynamics = __WEBPACK_IMPORTED_MODULE_0__style__["b" /* StyleDynamics */][st];
+        let dynamics = __WEBPACK_IMPORTED_MODULE_1__style__["b" /* StyleDynamics */][st];
         if (dynamics) {
             gainNode.gain.value = dynamics;
             return true;
@@ -239,6 +244,7 @@ function defaultGain(frequency, style) {
         frequencyModifier = (Math.pow((frequencyModifier + 1), 8)) - 1;
     }
     gainNode.gain.value += frequencyModifier;
+    gainNode.connect(masterGain);
     return gainNode;
 }
 function defaultOscillator(frequency, _style, gainNode) {
@@ -251,11 +257,11 @@ function defaultOscillator(frequency, _style, gainNode) {
 function defaultPlayer(note, startSeconds, stopSeconds) {
     let nodes = note.GetNodeChain();
     let noteDuration = stopSeconds - startSeconds, noteFadePct = 0.04, noteStopTime = stopSeconds;
-    if (!!~note.Style.indexOf(__WEBPACK_IMPORTED_MODULE_0__style__["a" /* Style */].Legato)) {
+    if (!!~note.Style.indexOf(__WEBPACK_IMPORTED_MODULE_1__style__["a" /* Style */].Legato)) {
         noteFadePct = 0.01;
         noteStopTime = stopSeconds;
     }
-    else if (!!~note.Style.indexOf(__WEBPACK_IMPORTED_MODULE_0__style__["a" /* Style */].Staccato)) {
+    else if (!!~note.Style.indexOf(__WEBPACK_IMPORTED_MODULE_1__style__["a" /* Style */].Staccato)) {
         noteFadePct = 0.01;
         noteStopTime = startSeconds + 0.15;
     }
@@ -274,8 +280,7 @@ function synthesizeNote(frequency, style) {
     let note = {
         Frequency: frequency,
         GetNodeChain: function () {
-            let gain = _gain(frequency, style);
-            gain.connect(masterGain);
+            let gain = _gain(frequency, style, masterGain);
             let oscillator = _oscillator(frequency, style, gain);
             let nodeChain = {
                 Gain: gain,
@@ -630,7 +635,7 @@ mysong.at(0).plays(sequence);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
+/* unused harmony export mysong */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
 
@@ -671,7 +676,7 @@ mysong.at(2).plays(createGliss(highNotes));
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export mysong */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
 
@@ -772,7 +777,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-__WEBPACK_IMPORTED_MODULE_7__play_glissandos__["a" /* mysong */].play();
+__WEBPACK_IMPORTED_MODULE_6__play_legato_staccato__["a" /* mysong */].play();
 
 
 /***/ }),
@@ -1588,6 +1593,135 @@ try {
 // easier to handle this case. if(!global) { ...}
 
 module.exports = g;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var sampleRate = 44100; // Hz
+var preGain = 0; //db
+var postGain = 0; //db
+var attackTime = 0; //s
+var releaseTime = 0.5; //s
+var threshold = -2; //dB
+var lookAheadTime = 0.005; //s  5ms hard-coded
+var delayBuffer = new DelayBuffer(lookAheadTime * sampleRate);
+
+function DelayBuffer(n) {
+	n = Math.floor(n);
+    this._array = new Float32Array(2 * n);
+    this.length = this._array.length;  // can be optimized!
+    this.readPointer = 0;
+    this.writePointer = n - 1;
+	for (var i=0; i<this.length; i++){
+		this._array[i] = 0;
+	}
+}
+DelayBuffer.prototype.read = function() {
+    var value = this._array[this.readPointer % this.length];
+    this.readPointer++;
+    return value;
+};
+DelayBuffer.prototype.push = function(v) {
+    this._array[this.writePointer % this.length] = v;
+    this.writePointer++;
+};
+
+var envelopeSample = 0;
+var getEnvelope = function(data, attackTime, releaseTime, sampleRate){
+
+	//attack and release in milliseconds
+	var attackGain = Math.exp(-1/(sampleRate*attackTime));
+	var releaseGain = Math.exp(-1/(sampleRate*releaseTime));
+
+	var envelope = new Float32Array(data.length);
+
+	for (var i=0; i < data.length; i++){
+
+		var envIn = Math.abs(data[i]);
+
+		if (envelopeSample < envIn){
+
+			envelopeSample = envIn + attackGain * (envelopeSample - envIn);
+
+		}
+
+		else {
+
+			envelopeSample = envIn + releaseGain * (envelopeSample - envIn);
+
+		}
+
+		envelope[i] = envelopeSample;
+
+	}
+
+	return envelope;
+
+}
+
+
+var ampToDB = function(value){
+
+	return 20 * Math.log10(value);
+
+}
+
+
+var dBToAmp = function(db){
+
+	return Math.pow(10, db/20);
+
+}
+
+
+var limit = function(audioProcessingEvent){
+
+	var inp = audioProcessingEvent.inputBuffer.getChannelData(0);
+	var out = audioProcessingEvent.outputBuffer.getChannelData(0);
+
+	//transform db to amplitude value
+	var postGainAmp = dBToAmp(postGain);
+
+	//apply pre gain to signal
+	var preGainAmp = dBToAmp(preGain);
+	for (var k=0; k < inp.length; ++k){
+
+		out[k] = preGainAmp * inp[k];
+
+	}
+
+	var envelopeData = getEnvelope(out, attackTime, releaseTime, sampleRate);
+
+	if (lookAheadTime > 0){
+
+		//write signal into buffer and read delayed signal
+		for (var i = 0; i < out.length; i++){
+
+			delayBuffer.push(out[i]);
+			out[i] = delayBuffer.read();
+
+		}
+	}
+
+	//limiter mode: slope is 1
+	var slope = 1;
+
+	for (var i=0; i<inp.length; i++){
+
+		var gainDB = slope * (threshold - ampToDB(envelopeData[i]));
+		//is gain below zero?
+		gainDB = Math.min(0, gainDB);
+		var gain = dBToAmp(gainDB);
+		out[i] *= (gain * postGainAmp);
+
+	}
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (limit);
 
 
 /***/ })

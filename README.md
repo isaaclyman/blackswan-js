@@ -91,12 +91,15 @@ song.play();
 // You can sub in your own functions for creating gain nodes and oscillator nodes,
 //  playing a note, and improvising:
 
-blackswan.settings.setGain(function (frequency, style) {
+blackswan.settings.setGain(function (frequency, style, masterGain) {
+  // `frequency` is a number in hertz.
   // `style` is an array of blackswan.as style values.
+  // `masterGain` is the master GainNode for the entire composition, and the final
+  //   node before AudioContext.destination.
   // Return a GainNode.
-  // The GainNode you create here will be the final GainNode that each note passes
-  //  through before reaching the master GainNode, which is connected to
-  //  AudioContext.destination.
+  // You can chain nodes as desired, but you *must* connect the final node
+  //  to masterGain.
+  //  E.g.: GainNode -> DynamicsCompressorNode -> masterGain
 });
 
 blackswan.settings.setOscillator(function (frequency, style, gainNode) {
@@ -107,7 +110,7 @@ blackswan.settings.setOscillator(function (frequency, style, gainNode) {
   // Return an OscillatorNode.
   // You can chain nodes as desired, but you *must* connect the final node
   //  to gainNode.
-  //  E.g.: OscillatorNode -> GainNode -> ConvolverNode > DelayNode -> gainNode
+  //  E.g.: OscillatorNode -> GainNode -> ConvolverNode -> DelayNode -> gainNode
   // The start() and stop() methods of the OscillatorNode will be used to
   //  schedule the note.
 });
@@ -177,4 +180,5 @@ Fortissimo
 - Thanks to [mohayonao](https://github.com/mohayonao/web-audio-scheduler) for web-audio-scheduler, which is used by blackswan's callback feature. Thanks to [Chris Wilson](https://www.html5rocks.com/en/tutorials/audio/scheduling/), who inspired web-audio-scheduler, for writing up an event-scheduling solution that has enough precision to work with web audio.
 - Thanks to the [TypeScript community](https://www.typescriptlang.org/index.html). TypeScript made BlackSwan manageable as a weekend hobby project.
 - Thanks to [Alejandro Mantecon Guillen](http://alemangui.github.io/blog//2015/12/26/ramp-to-value.html) for writing about the annoying clicks that come from suddenly starting or stopping Web Audio oscillators and how to fix them.
+- Thanks to [Sebastian Zimmer](https://webaudiotech.com/sites/limiter_comparison/) for building a lookahead limiter that prevents clipping when playing multiple oscillators simultaneously. Thanks to [Christian Floisand](https://christianfloisand.wordpress.com/2014/06/09/dynamics-processing-compressorlimiter-part-1/) for inspiring it.
 - Thanks to everyone who has written about the Web Audio API on blogs, Stack Overflow and elsewhere. This library was easy to write because of the extraordinary professional generosity of the software development community.

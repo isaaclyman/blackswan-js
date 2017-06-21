@@ -3,6 +3,8 @@
 //  can be used seamlessly, and arbitrary notes can be played with
 //  arbitrary articulation and dynamics.
 
+import  Limit from './brickwall-limiter.lib';
+
 import { Style, StyleDynamics } from './style';
 
 export interface Note {
@@ -18,11 +20,18 @@ interface NodeChain {
 }
 
 let _context = new AudioContext();
+
 let masterGain = _context.createGain();
 masterGain.gain.value = 0.4;
-masterGain.connect(_context.destination);
 
-function defaultGain(frequency: number, style: Style[]): GainNode {
+let brickwallLimiter = _context.createScriptProcessor(4096, 1, 1);
+brickwallLimiter.onaudioprocess = Limit;
+brickwallLimiter.connect(_context.destination);
+
+masterGain.connect(brickwallLimiter);
+
+
+function defaultGain(frequency: number, style: Style[], masterGain: GainNode): GainNode {
   let gainNode = _context.createGain();
 
   let hasDynamics = style.some((st) => {
@@ -60,6 +69,8 @@ function defaultGain(frequency: number, style: Style[]): GainNode {
   }
 
   gainNode.gain.value += frequencyModifier;
+
+  gainNode.connect(masterGain);
 
   return gainNode;
 }
@@ -108,9 +119,7 @@ function synthesizeNote(frequency: number, style: Style[]): Note {
   let note: Note = {
     Frequency: frequency,
     GetNodeChain: function(this: Note): NodeChain {
-      let gain = _gain(frequency, style);
-      gain.connect(masterGain);
-
+      let gain = _gain(frequency, style, masterGain);
       let oscillator = _oscillator(frequency, style, gain);
 
       let nodeChain: NodeChain = {
@@ -129,7 +138,7 @@ function synthesizeNote(frequency: number, style: Style[]): Note {
   return note;
 }
 
-function setGain(gain: (frequency: number, style: Style[]) => GainNode): void {
+function setGain(gain: (frequency: number, style: Style[], masterGain: GainNode) => GainNode): void {
   _gain = gain;
 }
 
