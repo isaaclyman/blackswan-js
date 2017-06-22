@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 27);
+/******/ 	return __webpack_require__(__webpack_require__.s = 28);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -210,24 +210,22 @@ function DefaultSongData() {
 
 let _context = new AudioContext();
 let masterGain = _context.createGain();
-masterGain.gain.value = 0.4;
+masterGain.gain.value = 0.7;
 let brickwallLimiter = _context.createScriptProcessor(4096, 1, 1);
 brickwallLimiter.onaudioprocess = __WEBPACK_IMPORTED_MODULE_0__brickwall_limiter_lib__["a" /* default */];
 brickwallLimiter.connect(_context.destination);
 masterGain.connect(brickwallLimiter);
 function defaultGain(frequency, style, masterGain) {
     let gainNode = _context.createGain();
-    let hasDynamics = style.some((st) => {
+    gainNode.gain.value = 0.2;
+    style.some((st) => {
         let dynamics = __WEBPACK_IMPORTED_MODULE_1__style__["b" /* StyleDynamics */][st];
         if (dynamics) {
-            gainNode.gain.value = dynamics;
+            gainNode.gain.value += dynamics * 0.12;
             return true;
         }
         return false;
     });
-    if (!hasDynamics) {
-        gainNode.gain.value = 0.5;
-    }
     // Lower frequencies are too quiet and higher frequencies are too loud.
     // To solve this, let's modify the gain based on the frequency.
     // Frequency is exponential, i.e. frequency = note ** 2
@@ -236,14 +234,14 @@ function defaultGain(frequency, style, masterGain) {
     let maxFrequencyLinear = Math.sqrt(4200);
     // Then we take the percent of max frequency and place it in the range [-f + g, f + g]
     //  where f + g is the maximum amount we want to increase gain
-    //  do magic to it if f > 1
+    //  do magic to it if f + g > 0
     //  then add that to the gain.
     let frequencyScale = frequencyLinear / maxFrequencyLinear;
     let frequencyFactor = 0.25;
     let frequencyOffset = 0.08;
     let frequencyModifier = (frequencyScale * -frequencyFactor) + (frequencyFactor / 2) + frequencyOffset;
     if (frequencyModifier > 0) {
-        frequencyModifier = (Math.pow((frequencyModifier + 1), 8)) - 1;
+        frequencyModifier = (Math.pow((frequencyModifier + 1), 3)) - 1;
     }
     gainNode.gain.value += frequencyModifier;
     gainNode.connect(masterGain);
@@ -384,12 +382,12 @@ var Style;
 })(Style || (Style = {}));
 ;
 let StyleDynamics = {
-    [Style.Pianissimo]: 0.01,
-    [Style.Piano]: 0.05,
-    [Style.MezzoPiano]: 0.2,
-    [Style.MezzoForte]: 0.4,
-    [Style.Forte]: 0.6,
-    [Style.Fortissimo]: 1.0
+    [Style.Pianissimo]: -3,
+    [Style.Piano]: -2,
+    [Style.MezzoPiano]: -1,
+    [Style.MezzoForte]: 1,
+    [Style.Forte]: 2,
+    [Style.Fortissimo]: 3
 };
 
 
@@ -1302,7 +1300,7 @@ var sampleRate = 44100; // Hz
 var preGain = 0; //db
 var postGain = 0; //db
 var attackTime = 0; //s
-var releaseTime = 0.5; //s
+var releaseTime = 0.05; //s
 var threshold = -2; //dB
 var lookAheadTime = 0.005; //s  5ms hard-coded
 var delayBuffer = new DelayBuffer(lookAheadTime * sampleRate);
@@ -1581,6 +1579,33 @@ mysong.at(0).plays(sequence);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
+
+
+
+let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('one note');
+
+// Default tempo and time signature will be fine.
+
+mysong.at(0).plays(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence([
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Pianissimo),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Piano),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.MezzoPiano),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.MezzoForte),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Forte),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Fortissimo),
+]));
+
+
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* unused harmony export mysong */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
@@ -1618,11 +1643,11 @@ mysong.at(2).plays(createGliss(highNotes));
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
+/* unused harmony export mysong */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
 
@@ -1652,7 +1677,7 @@ mysong.at(0.75).plays(legatoSeq);
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1673,7 +1698,7 @@ mysong.at(0).plays(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note(
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1698,20 +1723,21 @@ mysong.at(1).repeats(chord, { every: 1, times: 2 });
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_one_note__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__play_one_note__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__play_a_sequence__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__play_chords__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__repeat__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__repeat__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__improvise__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__call_back_recursively__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__play_legato_staccato__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__play_glissandos__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__play_la_cucaracha__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__play_legato_staccato__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__play_glissandos__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__play_dynamics__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__play_la_cucaracha__ = __webpack_require__(18);
 
 
 
@@ -1723,7 +1749,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-__WEBPACK_IMPORTED_MODULE_6__play_legato_staccato__["a" /* mysong */].play();
+
+__WEBPACK_IMPORTED_MODULE_8__play_dynamics__["a" /* mysong */].play();
 
 
 /***/ })

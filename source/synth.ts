@@ -22,30 +22,27 @@ interface NodeChain {
 let _context = new AudioContext();
 
 let masterGain = _context.createGain();
-masterGain.gain.value = 0.4;
+masterGain.gain.value = 0.7;
 
 let brickwallLimiter = _context.createScriptProcessor(4096, 1, 1);
 brickwallLimiter.onaudioprocess = Limit;
-brickwallLimiter.connect(_context.destination);
 
+brickwallLimiter.connect(_context.destination);
 masterGain.connect(brickwallLimiter);
 
 
 function defaultGain(frequency: number, style: Style[], masterGain: GainNode): GainNode {
   let gainNode = _context.createGain();
+  gainNode.gain.value = 0.2;
 
-  let hasDynamics = style.some((st) => {
+  style.some((st) => {
     let dynamics: number = StyleDynamics[st];
     if (dynamics) {
-      gainNode.gain.value = dynamics;
+      gainNode.gain.value += dynamics * 0.12;
       return true;
     }
     return false;
   });
-
-  if (!hasDynamics) {
-    gainNode.gain.value = 0.5;
-  }
 
   // Lower frequencies are too quiet and higher frequencies are too loud.
   // To solve this, let's modify the gain based on the frequency.
@@ -57,7 +54,7 @@ function defaultGain(frequency: number, style: Style[], masterGain: GainNode): G
 
   // Then we take the percent of max frequency and place it in the range [-f + g, f + g]
   //  where f + g is the maximum amount we want to increase gain
-  //  do magic to it if f > 1
+  //  do magic to it if f + g > 0
   //  then add that to the gain.
   let frequencyScale = frequencyLinear / maxFrequencyLinear;
   let frequencyFactor = 0.25;
@@ -65,7 +62,7 @@ function defaultGain(frequency: number, style: Style[], masterGain: GainNode): G
   let frequencyModifier = (frequencyScale * -frequencyFactor) + (frequencyFactor / 2) + frequencyOffset;
 
   if (frequencyModifier > 0) {
-    frequencyModifier = ((frequencyModifier + 1) ** 8) - 1;
+    frequencyModifier = ((frequencyModifier + 1) ** 3) - 1;
   }
 
   gainNode.gain.value += frequencyModifier;
@@ -103,6 +100,7 @@ function defaultPlayer(note: Note, startSeconds: number, stopSeconds: number): v
   let noteFadeTime = noteFadePct * noteDuration;
 
   let maxGain = nodes.Gain.gain.value;
+
   nodes.Gain.gain.value = 0;
   nodes.Gain.gain.setTargetAtTime(maxGain, startSeconds, noteFadeTime);
   nodes.Gain.gain.setTargetAtTime(0, noteStopTime - (noteFadeTime * 4), noteFadeTime);

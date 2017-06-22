@@ -210,24 +210,22 @@ function DefaultSongData() {
 
 let _context = new AudioContext();
 let masterGain = _context.createGain();
-masterGain.gain.value = 0.4;
+masterGain.gain.value = 0.7;
 let brickwallLimiter = _context.createScriptProcessor(4096, 1, 1);
 brickwallLimiter.onaudioprocess = __WEBPACK_IMPORTED_MODULE_0__brickwall_limiter_lib__["a" /* default */];
 brickwallLimiter.connect(_context.destination);
 masterGain.connect(brickwallLimiter);
 function defaultGain(frequency, style, masterGain) {
     let gainNode = _context.createGain();
-    let hasDynamics = style.some((st) => {
+    gainNode.gain.value = 0.2;
+    style.some((st) => {
         let dynamics = __WEBPACK_IMPORTED_MODULE_1__style__["b" /* StyleDynamics */][st];
         if (dynamics) {
-            gainNode.gain.value = dynamics;
+            gainNode.gain.value += dynamics * 0.12;
             return true;
         }
         return false;
     });
-    if (!hasDynamics) {
-        gainNode.gain.value = 0.5;
-    }
     // Lower frequencies are too quiet and higher frequencies are too loud.
     // To solve this, let's modify the gain based on the frequency.
     // Frequency is exponential, i.e. frequency = note ** 2
@@ -236,14 +234,14 @@ function defaultGain(frequency, style, masterGain) {
     let maxFrequencyLinear = Math.sqrt(4200);
     // Then we take the percent of max frequency and place it in the range [-f + g, f + g]
     //  where f + g is the maximum amount we want to increase gain
-    //  do magic to it if f > 1
+    //  do magic to it if f + g > 0
     //  then add that to the gain.
     let frequencyScale = frequencyLinear / maxFrequencyLinear;
     let frequencyFactor = 0.25;
     let frequencyOffset = 0.08;
     let frequencyModifier = (frequencyScale * -frequencyFactor) + (frequencyFactor / 2) + frequencyOffset;
     if (frequencyModifier > 0) {
-        frequencyModifier = (Math.pow((frequencyModifier + 1), 8)) - 1;
+        frequencyModifier = (Math.pow((frequencyModifier + 1), 3)) - 1;
     }
     gainNode.gain.value += frequencyModifier;
     gainNode.connect(masterGain);
@@ -384,12 +382,12 @@ var Style;
 })(Style || (Style = {}));
 ;
 let StyleDynamics = {
-    [Style.Pianissimo]: 0.01,
-    [Style.Piano]: 0.05,
-    [Style.MezzoPiano]: 0.2,
-    [Style.MezzoForte]: 0.4,
-    [Style.Forte]: 0.6,
-    [Style.Fortissimo]: 1.0
+    [Style.Pianissimo]: -3,
+    [Style.Piano]: -2,
+    [Style.MezzoPiano]: -1,
+    [Style.MezzoForte]: 1,
+    [Style.Forte]: 2,
+    [Style.Fortissimo]: 3
 };
 
 
@@ -1302,7 +1300,7 @@ var sampleRate = 44100; // Hz
 var preGain = 0; //db
 var postGain = 0; //db
 var attackTime = 0; //s
-var releaseTime = 0.5; //s
+var releaseTime = 0.05; //s
 var threshold = -2; //dB
 var lookAheadTime = 0.005; //s  5ms hard-coded
 var delayBuffer = new DelayBuffer(lookAheadTime * sampleRate);

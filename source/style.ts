@@ -15,12 +15,12 @@ export interface StyleDynamicsDict {
 }
 
 let StyleDynamics: StyleDynamicsDict = {
-  [Style.Pianissimo]: 0.01,
-  [Style.Piano]: 0.05,
-  [Style.MezzoPiano]: 0.2,
-  [Style.MezzoForte]: 0.4,
-  [Style.Forte]: 0.6,
-  [Style.Fortissimo]: 1.0
+  [Style.Pianissimo]: -3,
+  [Style.Piano]: -2,
+  [Style.MezzoPiano]: -1,
+  [Style.MezzoForte]: 1,
+  [Style.Forte]: 2,
+  [Style.Fortissimo]: 3
 };
 
 export { Style, StyleDynamics };
