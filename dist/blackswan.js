@@ -523,7 +523,7 @@ function getFrequency(noteName) {
         return byKey;
     }
     let key, note, sign = '', octave;
-    note = noteName[0];
+    note = noteName[0].toLowerCase();
     if (noteName.length === 3) {
         sign = noteName[1];
         __WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].Sign(sign);
@@ -531,7 +531,13 @@ function getFrequency(noteName) {
         __WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].Octave(octave);
     }
     else if (noteName.length === 2) {
-        octave = Number(noteName[1]);
+        if (!!~__WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].FlatSigns.indexOf(noteName[1]) || !!~__WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].SharpSigns.indexOf(noteName[1])) {
+            sign = noteName[1];
+            octave = _octave;
+        }
+        else {
+            octave = Number(noteName[1]);
+        }
     }
     else if (noteName.length === 1) {
         octave = _octave;
@@ -551,19 +557,26 @@ function getFrequency(noteName) {
         // If it's CF-flat, transform into the next note down
         // This changes octaves if the note is a C
         key = getPrevNote(note) +
-            note === 'c' ?
-            (octave - 1).toString() :
-            octave.toString();
+            (note === 'c' ?
+                (octave - 1).toString() :
+                octave.toString());
         return __WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].NoteMap[key];
     }
     else if (!!~'be'.indexOf(note) && !!~__WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].SharpSigns.indexOf(sign)) {
         // If it's BE-sharp, transform it into the next note up
         // This changes octaves if the note is a B
         key = getNextNote(note) +
-            note === 'b' ?
-            (octave + 1).toString() :
-            octave.toString();
+            (note === 'b' ?
+                (octave + 1).toString() :
+                octave.toString());
         return __WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].NoteMap[key];
+    }
+    else {
+        key = note + (sign || '') + (octave || '');
+        let byConstructedKey = __WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].NoteMap[key];
+        if (byConstructedKey) {
+            return byConstructedKey;
+        }
     }
     throw Error(`The note "${noteName}" is unknown.`);
 }

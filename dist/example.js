@@ -523,7 +523,7 @@ function getFrequency(noteName) {
         return byKey;
     }
     let key, note, sign = '', octave;
-    note = noteName[0];
+    note = noteName[0].toLowerCase();
     if (noteName.length === 3) {
         sign = noteName[1];
         __WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].Sign(sign);
@@ -531,7 +531,13 @@ function getFrequency(noteName) {
         __WEBPACK_IMPORTED_MODULE_1__validate__["a" /* Validate */].Octave(octave);
     }
     else if (noteName.length === 2) {
-        octave = Number(noteName[1]);
+        if (!!~__WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].FlatSigns.indexOf(noteName[1]) || !!~__WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].SharpSigns.indexOf(noteName[1])) {
+            sign = noteName[1];
+            octave = _octave;
+        }
+        else {
+            octave = Number(noteName[1]);
+        }
     }
     else if (noteName.length === 1) {
         octave = _octave;
@@ -551,19 +557,26 @@ function getFrequency(noteName) {
         // If it's CF-flat, transform into the next note down
         // This changes octaves if the note is a C
         key = getPrevNote(note) +
-            note === 'c' ?
-            (octave - 1).toString() :
-            octave.toString();
+            (note === 'c' ?
+                (octave - 1).toString() :
+                octave.toString());
         return __WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].NoteMap[key];
     }
     else if (!!~'be'.indexOf(note) && !!~__WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].SharpSigns.indexOf(sign)) {
         // If it's BE-sharp, transform it into the next note up
         // This changes octaves if the note is a B
         key = getNextNote(note) +
-            note === 'b' ?
-            (octave + 1).toString() :
-            octave.toString();
+            (note === 'b' ?
+                (octave + 1).toString() :
+                octave.toString());
         return __WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].NoteMap[key];
+    }
+    else {
+        key = note + (sign || '') + (octave || '');
+        let byConstructedKey = __WEBPACK_IMPORTED_MODULE_0__piano_data__["a" /* PianoData */].NoteMap[key];
+        if (byConstructedKey) {
+            return byConstructedKey;
+        }
     }
     throw Error(`The note "${noteName}" is unknown.`);
 }
@@ -1579,7 +1592,7 @@ mysong.at(0).plays(sequence);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
+/* unused harmony export mysong */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
 
@@ -1737,7 +1750,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__play_legato_staccato__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__play_glissandos__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__play_dynamics__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__play_la_cucaracha__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__play_strange_notes__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__play_la_cucaracha__ = __webpack_require__(18);
 
 
 
@@ -1750,7 +1764,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-__WEBPACK_IMPORTED_MODULE_8__play_dynamics__["a" /* mysong */].play();
+
+__WEBPACK_IMPORTED_MODULE_9__play_strange_notes__["a" /* mysong */].play();
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return mysong; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
+
+
+
+let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('one note');
+
+mysong.at(0).plays(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence([
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c', 0.5),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c#', 0.5),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c@4', 0.5),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('cb4', 0.5),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('A5', 0.5),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('b#', 0.5)
+]));
+
+
 
 
 /***/ })

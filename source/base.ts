@@ -61,6 +61,7 @@ let Base = (function (window) {
 
   function note(noteName: string, duration: number, ...config: Style[]): TimedNote {
     let note = Synth.SynthesizeNote(Notes.getFrequency(noteName), config);
+    
     return {
       Duration: duration,
       Note: note

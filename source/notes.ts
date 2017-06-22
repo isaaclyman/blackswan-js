@@ -50,14 +50,19 @@ function getFrequency(noteName: string): number {
       sign: string = '',
       octave: number;
 
-  note = noteName[0];
+  note = noteName[0].toLowerCase();
   if (noteName.length === 3) {
     sign = noteName[1];
     Validate.Sign(sign);
     octave = Number(noteName[2]);
     Validate.Octave(octave);
   } else if (noteName.length === 2) {
-    octave = Number(noteName[1]);
+    if (!!~PianoData.FlatSigns.indexOf(noteName[1]) || !!~PianoData.SharpSigns.indexOf(noteName[1])) {
+      sign = noteName[1];
+      octave = _octave;
+    } else {
+      octave = Number(noteName[1]);
+    }
   } else if (noteName.length === 1) {
     octave = _octave;
   } else {
@@ -75,18 +80,26 @@ function getFrequency(noteName: string): number {
     // If it's CF-flat, transform into the next note down
     // This changes octaves if the note is a C
     key = getPrevNote(note) +
-      note === 'c' ?
+      (note === 'c' ?
         (octave - 1).toString() :
-        octave.toString();
+        octave.toString());
+
     return PianoData.NoteMap[key];
   } else if (!!~'be'.indexOf(note) && !!~PianoData.SharpSigns.indexOf(sign)) {
     // If it's BE-sharp, transform it into the next note up
     // This changes octaves if the note is a B
     key = getNextNote(note) +
-      note === 'b' ?
+      (note === 'b' ?
         (octave + 1).toString() :
-        octave.toString();
+        octave.toString());
     return PianoData.NoteMap[key];
+  } else {
+    key = note + (sign || '') + (octave || '');
+    let byConstructedKey = PianoData.NoteMap[key];
+
+    if (byConstructedKey) {
+      return byConstructedKey;
+    }
   }
 
   throw Error(`The note "${noteName}" is unknown.`);

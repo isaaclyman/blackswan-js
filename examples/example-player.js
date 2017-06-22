@@ -7,7 +7,8 @@ import { mysong as Recurse } from './call-back-recursively';
 import { mysong as LegatoStaccato } from './play-legato-staccato';
 import { mysong as Glissandos } from './play-glissandos';
 import { mysong as Dynamics } from './play-dynamics';
+import { mysong as StrangeNotes } from './play-strange-notes';
 
 import { mysong as LaCucaracha } from './play-la-cucaracha';
 
-Dynamics.play();
+StrangeNotes.play();
