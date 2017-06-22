@@ -10,7 +10,7 @@ blackswan.js is named after "Black Swan Song" by the British band Athlete. Its i
 - Structured improvisation is a first-class feature.
 - For power users, the synth and improviser are user-swappable with minimal headache.
 
-## Basics
+## Basic Features
 
 After including blackswan.js in a page (or importing it from base.ts):
 
@@ -22,7 +22,8 @@ song.setTempo(120);
 
 // Now let's set up a chord to use later
 // blackswan.chord: pass in all the notes to be played simultaneously, a
-//  duration (number of beats), and optional configuration parameters
+//  duration (note value, e.g. 0.25 for a quarter note), and optional
+//  configuration parameters
 // Here we only want to set the notes, not the duration or config, so
 //  we use fn.bind(scope, param1..paramN)
 var cMajorChord = blackswan.chord.bind(null, ['c4', 'e4', 'g4']);
@@ -35,12 +36,12 @@ var cMajorChord = blackswan.chord.bind(null, ['c4', 'e4', 'g4']);
 // Sequences start at the beginning of an imaginary measure
 //  in the given time signature
 var lowerRiff = blackswan.sequence([
-  // blackswan.rest: pass in the number of beats
-  blackswan.rest(3),
-  // blackswan.note: pass in the note name (as before), a duration (number
-  //  of beats) and optional configuration parameters
-  blackswan.note('c3', 0.75, blackswan.as.Staccato),
-  blackswan.note('e3', 0.25, blackswan.as.Staccato),
+  // blackswan.rest: pass in the note value to rest for
+  blackswan.rest(1/4),
+  // blackswan.note: pass in the note name (as before), a duration (note
+  //  value) and optional configuration parameters
+  blackswan.note('c3', 1/2, blackswan.as.Staccato),
+  blackswan.note('e3', 1/4, blackswan.as.Staccato),
   blackswan.note('c3', 1, blackswan.as.Staccato)
 ]);
 
@@ -50,13 +51,13 @@ var lowerRiff = blackswan.sequence([
 var lowerScale = blackswan.scale([
   'b2', 'c3', 'e3', 'f3', 'g3', 'c4',
 ], {
-  // durations: an array of note durations, in number of beats, that the
+  // durations: an array of note durations, in note values, that the
   //  improviser may select from for each note. To make some durations more
   //  common than others, repeat them in the array. For example, in this case,
   //  a quarter note will be twice as common as a half note or a whole note,
   //  when using the default improviser.
-  // Default is [1].
-  durations: [0.25, 0.25, 0.5, 1],
+  // Default is [1/4].
+  durations: [1/4, 1/4, 1/2, 1],
   // style: an array of blackswan.as configuration parameters
   // Default is [].
   style: [blackswan.as.Staccato]
@@ -66,7 +67,9 @@ var lowerScale = blackswan.scale([
 song.at(0)
 // blackswan.song.at.repeats: pass in a note or chord and a configuration
 //  object
-// "every": how many beats to pause between repeats
+// "every": how frequently to repeat (as a note value). Here, the cMajorChord
+//   will be repeated every whole note. Since it lasts a whole note, there is no
+//   rest between chords.
 // "times": how many times to repeat
   .repeats(cMajorChord(1, blackswan.as.Staccato), { every: 1, times: 21 });
 
@@ -74,7 +77,7 @@ song.at(0)
 song.at(1)
   .plays(lowerRiff);
 
-// blackswan.song.at.improvises: pass in a scale and a duration (number of beats)
+// blackswan.song.at.improvises: pass in a scale and a duration (note value)
 song.at(3)
   .improvises(lowerScale, 8);
 
@@ -132,12 +135,12 @@ blackswan.settings.setPlayer(function (note, startSeconds, stopSeconds) {
 blackswan.settings.setImproviser(function (scale, duration) {
   // `scale` is an object with the following properties:
   //   Config: an object with the following properties:
-  //     durations: an array of numbers of beats
+  //     durations: an array of note values
   //     style: an array of blackswan.as style values
   //   Playables: an array of strings and/or arrays of strings. Each string is a note
   //    name e.g. 'c4' in either case. Strings are meant to be notes, and arrays
   //    of strings are meant to be chords.
-  // `duration` is the number of beats that should be improvised over.
+  // `duration` is the duration (note value) that should be improvised over.
   // Return an array of blackswan.note(...), blackswan.chord(...), and/or
   //  blackswan.rest(...)
 });

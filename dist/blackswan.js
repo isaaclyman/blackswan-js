@@ -138,7 +138,7 @@ let Base = (function (window) {
     function scale(playables, config) {
         return {
             Config: config || {
-                durations: [1],
+                durations: [1 / 4],
                 style: []
             },
             Playables: playables
@@ -648,20 +648,21 @@ function repeats(context, repeatable, config) {
         let track = {
             Notes: baseTrack.Notes,
             DurationSeconds: baseTrack.DurationSeconds,
-            WhenSeconds: baseTrack.WhenSeconds + (index * beatsToSeconds(config.every, context.Song))
+            WhenSeconds: baseTrack.WhenSeconds + (index * noteValueToSeconds(config.every, context.Song))
         };
         tracksToAdd.push(track);
     }
     context.Song._master = context.Song._master.concat(tracksToAdd);
 }
-function beatsToMeasures(beats, song) {
-    let beatsPerMeasure = song._metadata.TimeSignature.beatsPerMeasure;
-    return (1 / beatsPerMeasure) * beats;
+function noteValueToMeasures(noteValue, song) {
+    return noteValue * (song._metadata.TimeSignature.noteValue /
+        song._metadata.TimeSignature.beatsPerMeasure);
 }
-function beatsToSeconds(beats, song) {
+function noteValueToSeconds(noteValue, song) {
     let beatsPerMinute = song._metadata.Tempo;
     let secondsPerMinute = 60;
     let secondsPerBeat = secondsPerMinute / beatsPerMinute;
+    let beats = noteValue * song._metadata.TimeSignature.noteValue;
     return secondsPerBeat * beats;
 }
 function measuresToSeconds(measures, song) {
@@ -677,7 +678,7 @@ function getTracks(context, playable) {
     if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedNote(playable)) {
         let track = {
             Notes: [playable.Note],
-            DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
+            DurationSeconds: noteValueToSeconds(playable.Duration, context.Song),
             WhenSeconds: WhenSeconds
         };
         return [track];
@@ -685,7 +686,7 @@ function getTracks(context, playable) {
     else if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedChord(playable)) {
         let track = {
             Notes: playable.Notes,
-            DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
+            DurationSeconds: noteValueToSeconds(playable.Duration, context.Song),
             WhenSeconds: WhenSeconds
         };
         return [track];
@@ -693,7 +694,7 @@ function getTracks(context, playable) {
     else {
         return playable.map((item, index) => {
             if (index > 0) {
-                context.Measure += beatsToMeasures(playable[index - 1].Duration, context.Song);
+                context.Measure += noteValueToMeasures(playable[index - 1].Duration, context.Song);
             }
             if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedNote(item)) {
                 return getTracks(context, item);
@@ -704,12 +705,12 @@ function getTracks(context, playable) {
             else {
                 let track = {
                     Notes: [],
-                    DurationSeconds: beatsToSeconds(item.Duration, context.Song),
+                    DurationSeconds: noteValueToSeconds(item.Duration, context.Song),
                     WhenSeconds: WhenSeconds
                 };
                 return [track];
             }
-        }).reduce((a, b) => a.concat(b));
+        }).reduce((a, b) => a.concat(b), []);
     }
 }
 function getActions(song, measure) {

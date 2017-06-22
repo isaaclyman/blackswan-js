@@ -9,10 +9,10 @@ let scale = blackswan.scale([
   'c4', 'e4', 'f4', 'g4', 'c5',
   ['e4', 'g4']
 ], {
-  durations: [0.5, 0.5, 1],
+  durations: [1/4, 1/4, 1/2],
   style: []
 });
 
-mysong.at(0).improvises(scale, 8);
+mysong.at(0).improvises(scale, 4);
 
 export { mysong }

@@ -8,6 +8,8 @@ import { mysong as LegatoStaccato } from './play-legato-staccato';
 import { mysong as Glissandos } from './play-glissandos';
 import { mysong as Dynamics } from './play-dynamics';
 import { mysong as StrangeNotes } from './play-strange-notes';
+import { mysong as Metronome } from './metronome';
+import { mysong as ImproviseDefault } from './improvise-default';
 
 import { mysong as LaCucaracha } from './play-la-cucaracha';
 

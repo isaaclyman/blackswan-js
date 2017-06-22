@@ -138,7 +138,7 @@ let Base = (function (window) {
     function scale(playables, config) {
         return {
             Config: config || {
-                durations: [1],
+                durations: [1 / 4],
                 style: []
             },
             Playables: playables
@@ -648,20 +648,21 @@ function repeats(context, repeatable, config) {
         let track = {
             Notes: baseTrack.Notes,
             DurationSeconds: baseTrack.DurationSeconds,
-            WhenSeconds: baseTrack.WhenSeconds + (index * beatsToSeconds(config.every, context.Song))
+            WhenSeconds: baseTrack.WhenSeconds + (index * noteValueToSeconds(config.every, context.Song))
         };
         tracksToAdd.push(track);
     }
     context.Song._master = context.Song._master.concat(tracksToAdd);
 }
-function beatsToMeasures(beats, song) {
-    let beatsPerMeasure = song._metadata.TimeSignature.beatsPerMeasure;
-    return (1 / beatsPerMeasure) * beats;
+function noteValueToMeasures(noteValue, song) {
+    return noteValue * (song._metadata.TimeSignature.noteValue /
+        song._metadata.TimeSignature.beatsPerMeasure);
 }
-function beatsToSeconds(beats, song) {
+function noteValueToSeconds(noteValue, song) {
     let beatsPerMinute = song._metadata.Tempo;
     let secondsPerMinute = 60;
     let secondsPerBeat = secondsPerMinute / beatsPerMinute;
+    let beats = noteValue * song._metadata.TimeSignature.noteValue;
     return secondsPerBeat * beats;
 }
 function measuresToSeconds(measures, song) {
@@ -677,7 +678,7 @@ function getTracks(context, playable) {
     if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedNote(playable)) {
         let track = {
             Notes: [playable.Note],
-            DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
+            DurationSeconds: noteValueToSeconds(playable.Duration, context.Song),
             WhenSeconds: WhenSeconds
         };
         return [track];
@@ -685,7 +686,7 @@ function getTracks(context, playable) {
     else if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedChord(playable)) {
         let track = {
             Notes: playable.Notes,
-            DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
+            DurationSeconds: noteValueToSeconds(playable.Duration, context.Song),
             WhenSeconds: WhenSeconds
         };
         return [track];
@@ -693,7 +694,7 @@ function getTracks(context, playable) {
     else {
         return playable.map((item, index) => {
             if (index > 0) {
-                context.Measure += beatsToMeasures(playable[index - 1].Duration, context.Song);
+                context.Measure += noteValueToMeasures(playable[index - 1].Duration, context.Song);
             }
             if (__WEBPACK_IMPORTED_MODULE_2__validate__["a" /* Validate */].isTimedNote(item)) {
                 return getTracks(context, item);
@@ -704,12 +705,12 @@ function getTracks(context, playable) {
             else {
                 let track = {
                     Notes: [],
-                    DurationSeconds: beatsToSeconds(item.Duration, context.Song),
+                    DurationSeconds: noteValueToSeconds(item.Duration, context.Song),
                     WhenSeconds: WhenSeconds
                 };
                 return [track];
             }
-        }).reduce((a, b) => a.concat(b));
+        }).reduce((a, b) => a.concat(b), []);
     }
 }
 function getActions(song, measure) {
@@ -1449,23 +1450,23 @@ let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('La Cu
 // Kick up the tempo, arriba!
 mysong.setTempo(200);
 
-let la = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 0.5);
+let la = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1/8);
 let cu = la;
 let ca = cu;
-let ra = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('f4', 1.5);
-let cha = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1);
+let ra = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('f4', 3/8);
+let cha = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1/4);
 
-let climb = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('f4', 1);
-let ing = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('f4', 0.5);
-let up = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('e4', 0.5);
+let climb = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('f4', 1/4);
+let ing = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('f4', 1/8);
+let up = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('e4', 1/8);
 let and = up;
-let down = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('d4', 0.5);
+let down = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('d4', 1/8);
 let the = down;
-let wall = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1.5);
+let wall = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 3/8);
 
 let sequence = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence([
   la, cu, ca, ra, cha, la, cu, ca, ra, cha,
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].rest(1.5),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].rest(3/8),
   climb, ing, up, and, down, the, wall
 ]);
 
@@ -1520,11 +1521,11 @@ let scale = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].scale([
   'c4', 'e4', 'f4', 'g4', 'c5',
   ['e4', 'g4']
 ], {
-  durations: [0.5, 0.5, 1],
+  durations: [1/4, 1/4, 1/2],
   style: []
 });
 
-mysong.at(0).improvises(scale, 8);
+mysong.at(0).improvises(scale, 4);
 
 
 
@@ -1545,11 +1546,11 @@ let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('seque
 // Default tempo and time signature will be fine.
 
 let sequence = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence([
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('d4', 1),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('e4', 1),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].rest(1),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('f4', 1)
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('d4', 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('e4', 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].rest(1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('f4', 1/4)
 ]);
 
 // Play c4 for two seconds (four measures)
@@ -1574,11 +1575,11 @@ let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('chord
 // Default tempo and time signature will be fine.
 
 let sequence = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence([
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['c4', 'e4', 'g4'], 1),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['d4', 'f4', 'a4'], 1),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['e4', 'g4', 'b4'], 1),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].rest(1),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['f4', 'a4', 'c5'], 1)
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['c4', 'e4', 'g4'], 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['d4', 'f4', 'a4'], 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['e4', 'g4', 'b4'], 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].rest(1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['f4', 'a4', 'c5'], 1/4)
 ]);
 
 // Play c4 for two seconds (four measures)
@@ -1598,17 +1599,17 @@ mysong.at(0).plays(sequence);
 
 
 
-let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('one note');
+let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('dynamics');
 
 // Default tempo and time signature will be fine.
 
 mysong.at(0).plays(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence([
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Pianissimo),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Piano),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.MezzoPiano),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.MezzoForte),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Forte),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Fortissimo),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Pianissimo),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Piano),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.MezzoPiano),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.MezzoForte),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Forte),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Fortissimo),
 ]));
 
 
@@ -1625,7 +1626,7 @@ mysong.at(0).plays(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].seque
 
 
 
-let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('one note');
+let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('glissandos');
 
 // Default tempo and time signature will be fine.
 
@@ -1642,7 +1643,7 @@ function createGliss(notesArr) {
   let glissArr = [];
 
   for (let note of notesArr) {
-    glissArr.push(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note(note, 0.15));
+    glissArr.push(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note(note, 3/80));
   }
 
   return __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence(glissArr);
@@ -1672,15 +1673,15 @@ let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('legat
 
 // Play a few staccato notes
 let staccatoSeq = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence([
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Staccato),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('e4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Staccato),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Staccato)
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Staccato),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('e4', 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Staccato),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Staccato)
 ]);
 
 // Play a couple of legato chords
 let legatoSeq = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence([
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['c4', 'f4', 'g4'], 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Legato),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['c4', 'e4', 'g4'], 1, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Legato)
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['c4', 'f4', 'g4'], 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Legato),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['c4', 'e4', 'g4'], 1/4, __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].as.Legato)
 ]);
 
 mysong.at(0).plays(staccatoSeq);
@@ -1704,8 +1705,8 @@ let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('one n
 
 // Default tempo and time signature will be fine.
 
-// Play c4 for two seconds (four measures)
-mysong.at(0).plays(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 4));
+// Play c4 as a whole note
+mysong.at(0).plays(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1));
 
 
 
@@ -1725,12 +1726,12 @@ let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('repea
 
 // Default tempo and time signature will be fine.
 
-let note = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1);
-let chord = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['c4', 'e4', 'g4'], 1);
+let note = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c4', 1/4);
+let chord = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].chord(['e4', 'g4'], 1/4);
 
 // Repeat c4 four times, then repeat the chord twice
-mysong.at(0).repeats(note, { every: 1, times: 4 });
-mysong.at(1).repeats(chord, { every: 1, times: 2 });
+mysong.at(0).repeats(note, { every: 1/4, times: 4 });
+mysong.at(0.25).repeats(chord, { every: 1/4, times: 2 });
 
 
 
@@ -1751,7 +1752,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__play_glissandos__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__play_dynamics__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__play_strange_notes__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__play_la_cucaracha__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__metronome__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__improvise_default__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__play_la_cucaracha__ = __webpack_require__(18);
+
+
 
 
 
@@ -1779,16 +1784,57 @@ __WEBPACK_IMPORTED_MODULE_9__play_strange_notes__["a" /* mysong */].play();
 
 
 
-let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('one note');
+let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('strange notes');
 
 mysong.at(0).plays(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].sequence([
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c', 0.5),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c#', 0.5),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c@4', 0.5),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('cb4', 0.5),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('A5', 0.5),
-  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('b#', 0.5)
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c', 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c#', 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('c@4', 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('cb4', 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('A5', 1/4),
+  __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('b#', 1/4)
 ]));
+
+
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export mysong */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
+
+
+
+let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('metronome');
+mysong.setTempo(120);
+mysong.setTimeSignature(4, 4);
+
+mysong.at(0).repeats(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a3', 1/4), { every: 1/2, times: 20 });
+mysong.at(0.25).repeats(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].note('a4', 1/4), { every: 1/2, times: 20 });
+
+
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export mysong */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_song__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_base__ = __webpack_require__(0);
+
+
+
+let mysong = __WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].song('improvise with default settings');
+
+mysong.at(0).improvises(__WEBPACK_IMPORTED_MODULE_1__source_base__["blackswan"].scale([
+  'a4', 'b4', 'c5', 'e5'
+]), 4);
 
 
 

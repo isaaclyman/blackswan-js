@@ -1,7 +1,7 @@
 import { Song } from '../source/song';
 import { blackswan } from '../source/base';
 
-let mysong = blackswan.song('one note');
+let mysong = blackswan.song('glissandos');
 
 // Default tempo and time signature will be fine.
 
@@ -18,7 +18,7 @@ function createGliss(notesArr) {
   let glissArr = [];
 
   for (let note of notesArr) {
-    glissArr.push(blackswan.note(note, 0.15));
+    glissArr.push(blackswan.note(note, 3/80));
   }
 
   return blackswan.sequence(glissArr);

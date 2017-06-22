@@ -62,7 +62,7 @@ function repeats(context: ActionContext, repeatable: TimedNote|TimedChord, confi
     let track: Track = {
       Notes: baseTrack.Notes,
       DurationSeconds: baseTrack.DurationSeconds,
-      WhenSeconds: baseTrack.WhenSeconds + (index * beatsToSeconds(config.every, context.Song))
+      WhenSeconds: baseTrack.WhenSeconds + (index * noteValueToSeconds(config.every, context.Song))
     };
     tracksToAdd.push(track);
   }
@@ -70,16 +70,19 @@ function repeats(context: ActionContext, repeatable: TimedNote|TimedChord, confi
   context.Song._master = context.Song._master.concat(tracksToAdd);
 }
 
-function beatsToMeasures(beats: number, song: Song): number {
-  let beatsPerMeasure = song._metadata.TimeSignature.beatsPerMeasure;
-
-  return (1 / beatsPerMeasure) * beats;
+function noteValueToMeasures(noteValue: number, song: Song): number {
+  return noteValue * (
+    song._metadata.TimeSignature.noteValue /
+    song._metadata.TimeSignature.beatsPerMeasure
+  );
 }
 
-function beatsToSeconds(beats: number, song: Song): number {
+function noteValueToSeconds(noteValue: number, song: Song): number {
   let beatsPerMinute = song._metadata.Tempo;
   let secondsPerMinute = 60;
   let secondsPerBeat = secondsPerMinute / beatsPerMinute;
+
+  let beats = noteValue * song._metadata.TimeSignature.noteValue;
 
   return secondsPerBeat * beats;
 }
@@ -100,21 +103,21 @@ function getTracks(context: ActionContext, playable: TimedNote|TimedChord|Sequen
   if (Validate.isTimedNote(playable)) {
     let track: Track = {
       Notes: [playable.Note],
-      DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
+      DurationSeconds: noteValueToSeconds(playable.Duration, context.Song),
       WhenSeconds: WhenSeconds
     };
     return [track];
   } else if (Validate.isTimedChord(playable)) {
     let track: Track = {
       Notes: playable.Notes,
-      DurationSeconds: beatsToSeconds(playable.Duration, context.Song),
+      DurationSeconds: noteValueToSeconds(playable.Duration, context.Song),
       WhenSeconds: WhenSeconds
     };
     return [track];
   } else {
     return playable.map((item, index) => {
       if (index > 0) {
-        context.Measure += beatsToMeasures(playable[index - 1].Duration, context.Song);
+        context.Measure += noteValueToMeasures(playable[index - 1].Duration, context.Song);
       }
 
       if (Validate.isTimedNote(item)) {
@@ -124,12 +127,12 @@ function getTracks(context: ActionContext, playable: TimedNote|TimedChord|Sequen
       } else {
         let track: Track = {
           Notes: [],
-          DurationSeconds: beatsToSeconds(item.Duration, context.Song),
+          DurationSeconds: noteValueToSeconds(item.Duration, context.Song),
           WhenSeconds: WhenSeconds
         };
         return [track];
       }
-    }).reduce((a, b) => a.concat(b));
+    }).reduce((a, b) => a.concat(b), []);
   }
 }
 

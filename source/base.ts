@@ -61,7 +61,7 @@ let Base = (function (window) {
 
   function note(noteName: string, duration: number, ...config: Style[]): TimedNote {
     let note = Synth.SynthesizeNote(Notes.getFrequency(noteName), config);
-    
+
     return {
       Duration: duration,
       Note: note
@@ -77,7 +77,7 @@ let Base = (function (window) {
   function scale(playables: Array<string|Array<string>>, config?: ImproviseConfig) {
     return {
       Config: config || {
-        durations: [1],
+        durations: [1/4],
         style: []
       },
       Playables: playables
