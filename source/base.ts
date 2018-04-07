@@ -50,7 +50,7 @@ let Base = (function (window) {
     this._metadata.Tempo = tempo;
   }
 
-  /* muzak static functions */
+  /* blackswan static functions */
 
   function chord(notes: string[], duration: number, ...config: Style[]): TimedChord {
     return {
