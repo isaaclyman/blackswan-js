@@ -5,6 +5,7 @@ export interface Note {
     Play: (this: Note, startSeconds: number, stopSeconds: number) => void;
     Stop: (this: Note) => void;
     Style: Style[];
+    _nodeChain: NodeChain;
 }
 export interface NodeChain {
     Gain: GainNode;
