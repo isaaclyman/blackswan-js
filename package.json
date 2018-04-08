@@ -2,7 +2,7 @@
   "name": "blackswan-js",
   "version": "0.0.8",
   "description": "A library for expressive music composition with JavaScript",
-  "main": "webpack.config.js",
+  "main": "dist/blackswan.js",
   "directories": {
     "example": "examples"
   },
