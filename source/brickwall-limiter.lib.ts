@@ -7,7 +7,7 @@ var threshold = -2; //dB
 var lookAheadTime = 0.005; //s  5ms hard-coded
 var delayBuffer = new DelayBuffer(lookAheadTime * sampleRate);
 
-function DelayBuffer(n) {
+function DelayBuffer(this: any, n: number) {
 	n = Math.floor(n);
     this._array = new Float32Array(2 * n);
     this.length = this._array.length;  // can be optimized!
@@ -28,7 +28,7 @@ DelayBuffer.prototype.push = function(v) {
 };
 
 var envelopeSample = 0;
-var getEnvelope = function(data, attackTime, releaseTime, sampleRate){
+var getEnvelope = function(data: any, attackTime: any, releaseTime: any, sampleRate: any){
 
 	//attack and release in milliseconds
 	var attackGain = Math.exp(-1/(sampleRate*attackTime));
@@ -61,21 +61,21 @@ var getEnvelope = function(data, attackTime, releaseTime, sampleRate){
 }
 
 
-var ampToDB = function(value){
+var ampToDB = function(value: number){
 
 	return 20 * Math.log10(value);
 
 }
 
 
-var dBToAmp = function(db){
+var dBToAmp = function(db: number){
 
 	return Math.pow(10, db/20);
 
 }
 
 
-var limit = function(audioProcessingEvent){
+var limit = function(audioProcessingEvent: any){
 
 	var inp = audioProcessingEvent.inputBuffer.getChannelData(0);
 	var out = audioProcessingEvent.outputBuffer.getChannelData(0);

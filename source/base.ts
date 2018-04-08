@@ -24,6 +24,7 @@ let Base = (function (window) {
     let song: Song = {
       at: getActions,
       play: Player.play,
+      stop: Player.stop,
       setTimeSignature: setTimeSignature,
       setTempo: setTempo,
       _master: [],

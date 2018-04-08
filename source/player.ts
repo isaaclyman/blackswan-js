@@ -13,6 +13,14 @@ function play(this: Song, when?: number) {
   }
 }
 
+function stop(this: Song) {
+  for (let track of this._master) {
+    for (let note of track.Notes) {
+      note.Stop()
+    }
+  }
+}
+
 function playAt(note: Note, whenSeconds: number, durationSeconds: number, startingAtSeconds: number = 0) {
   let startSeconds = Math.max(whenSeconds - startingAtSeconds, 0);
   let stopSeconds = Math.max((whenSeconds + durationSeconds) - startingAtSeconds, 0);
@@ -25,7 +33,8 @@ function playAt(note: Note, whenSeconds: number, durationSeconds: number, starti
 }
 
 let Player = {
-  play
+  play,
+  stop
 };
 
 export { Player };

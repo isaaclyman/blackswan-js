@@ -1,8 +1,9 @@
 {
   "name": "blackswan-js",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A library for expressive music composition with JavaScript",
   "main": "dist/blackswan.js",
+  "types": "dist/source/base.d.ts",
   "directories": {
     "example": "examples"
   },
@@ -18,7 +19,8 @@
     "webpack-cli": "^2.0.14"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --config ./source/webpack.config.js",
+    "build:examples": "webpack --config ./examples/webpack.config.js",
     "watch": "webpack --config ./webpack.config.js --watch"
   },
   "repository": {

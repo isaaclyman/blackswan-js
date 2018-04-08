@@ -3,6 +3,7 @@ import { Actions, Track } from './scheduler';
 export interface Song {
   at: (this: Song, measure: number) => Actions,
   play: () => void,
+  stop: () => void,
   setTimeSignature: (numerator: number, denominator: number) => void,
   setTempo: (tempo: number) => void,
   _master: Track[],
