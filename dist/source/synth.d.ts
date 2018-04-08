@@ -6,6 +6,7 @@ export interface Note {
     Stop: (this: Note) => void;
     Style: Style[];
     _nodeChain: NodeChain;
+    _started: boolean;
 }
 export interface NodeChain {
     Gain: GainNode;

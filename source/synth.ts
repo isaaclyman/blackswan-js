@@ -14,6 +14,7 @@ export interface Note {
   Stop: (this: Note) => void;
   Style: Style[];
   _nodeChain: NodeChain;
+  _started: boolean;
 }
 
 export interface NodeChain {
@@ -136,12 +137,17 @@ function synthesizeNote(frequency: number, style: Style[]): Note {
     },
     Play: function(this: Note, startSeconds: number, stopSeconds: number): void {
       _player(this, startSeconds, stopSeconds);
+      this._started = true
     },
     Stop: function(this: Note): void {
-      this.GetNodeChain().Oscillator.stop()
+      if (this._started) {
+        this.GetNodeChain().Oscillator.stop()
+      }
+      this._nodeChain = null
     },
     Style: style,
-    _nodeChain: null
+    _nodeChain: null,
+    _started: false
   };
 
   return note;
