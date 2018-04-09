@@ -10,9 +10,19 @@ blackswan.js is named after "Black Swan Song" by the British band Athlete. Its i
 - Structured improvisation is a first-class feature.
 - For power users, the synth and improviser are user-swappable with minimal headache.
 
+## Installation
+
+Via NPM:
+
+`npm install --save blackswan-js`
+
+`import blackswan from 'blackswan-js'`
+
+Alternately, you can add a `<script>` tag referencing "dist/blackswan.js" and the `blackswan` global will be attached to the `window` object.
+
 ## Basic Features
 
-After including blackswan.js in a page (or importing it from base.ts):
+After including blackswan.js in a page (or importing it from the NPM package):
 
 ```javascript
 // Create a song with a title, time signature and tempo (BPM)
